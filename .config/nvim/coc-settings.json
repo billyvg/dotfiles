@@ -1,0 +1,18 @@
+{
+  "tsserver.enableJavascript": false,
+  "javascript.validate.enable": false,
+  "coc.preferences.formatOnSaveFiletypes": ["typescript", "css", "Markdown", "python"],
+
+  "eslint.format.enable": true,
+  "eslint.packageManager": "yarn",
+  "eslint.run": "onType",
+  "eslint.autoFixOnSave": true,
+  "eslint.codeAction.disableRuleComment": {
+    "enable": true,
+    "location": "sameLine"
+  },
+
+  "python.pythonPath": "${workspaceFolder}/.venv/bin/python",
+  "python.formatting.provider": "black",
+  "python.formatting.blackPath": "~/.pyenv/shims/black"
+}
