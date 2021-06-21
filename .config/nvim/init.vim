@@ -1,7 +1,7 @@
 set modelines=1
 
 if has('nvim')
-  let s:editor_root=expand("~/.nvim")
+  " let s:editor_root=expand("~/.nvim")
   " set notermguicolors
   set termguicolors
   " Plug 'billyvg/node-host', { 'do': 'npm install' }
@@ -32,8 +32,8 @@ endif
 " Automatically install and run if not found
 if has('nvim')
   if empty(glob(expand('<sfile>:p:h') . '/autoload/plug.vim'))
-    exec 'silent !curl -fLo ' . '/autoload/plug.vim --create-dirs
-      \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+    echo 'empty'
+    exec '!curl -fLo ' . expand('<sfile>:p:h') . '/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
     augroup vimPlug
       autocmd!
       autocmd VimEnter * PlugInstall | source $MYVIMRC
