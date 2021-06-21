@@ -8,7 +8,6 @@ fi
 
 # Path to your oh-my-zsh installation.
 export ZSH=${HOME}/.oh-my-zsh
-export PROJECTS=~/Dev
 export LSCOLORS="exfxcxdxbxegedabagacad"
 export CLICOLOR=true
 
@@ -18,12 +17,11 @@ HISTFILE=~/.zsh_history
 HISTSIZE=10000
 SAVEHIST=10000
 
-export PYENV_ROOT="$HOME/.pyenv"
 
 # export PATH="/usr/local/opt/node@10/bin:/usr/local/opt/gettext/bin:$PYENV_ROOT/bin:$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$HOME/.cargo/bin:/usr/local/bin:$PATH"
-export PATH="$PYENV_ROOT/bin:$HOME/.cargo/bin:/usr/local/bin:/usr/local/opt/gettext/bin:$PATH"
+export PATH="$HOME/.cargo/bin:/usr/local/bin:/usr/local/opt/gettext/bin:$PATH"
 
-[ -f $ZSH/oh-my-zsh.sh ] && source $ZSH/oh-my-zsh.sh
+ [ -f $ZSH/oh-my-zsh.sh ] && source $ZSH/oh-my-zsh.sh
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 # infocmp $TERM | sed 's/kbs=^[hH]/kbs=\\177/' > $TERM.ti
 # tic $TERM.ti
@@ -120,10 +118,6 @@ fbr() {
 export NEOVIM_JS_DEBUG=/tmp/nvim_js_debug
 export EDITOR='nvim'
 
-# PYTHON
-export PROJECT_HOME=$HOME/Dev
-eval "$(pyenv init -)"
-
 alias yarnconflict="git checkout origin/master -- yarn.lock && yarn"
 alias gprunemerged='git checkout master && comm -12 <(git branch | sed "s/ *//g") <(git remote prune origin | sed "s/^.*origin\///g") | xargs -L1 -J % git branch -D %'
 alias gpm='git checkout main && comm -12 <(git branch | sed "s/ *//g") <(git remote prune origin | sed "s/^.*origin\///g") | xargs -L1 -J % git branch -D %'
@@ -152,11 +146,10 @@ eval "$(direnv hook zsh)"
 
 
 export NODE_OPTIONS=--max_old_space_size=8192
-export PYTHONDONTWRITEBYTECODE=1
-
-export PATH="$PATH:/Users/billy/.bin"
-
 export VOLTA_HOME="$HOME/.volta"
 export PATH="$VOLTA_HOME/bin:$PATH"
 export MANPAGER='nvim +Man!'
 export BAT_THEME='Monokai Extended'
+export PATH="$PATH:/Users/billy/.bin"
+
+[ -f ~/.sentryrc ] && source ~/.sentryrc
