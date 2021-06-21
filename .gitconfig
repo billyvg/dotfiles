@@ -44,7 +44,7 @@
   quotepath = false
   whitespace = trailing-space,space-before-tab
   editor = nvim
-  pager = bash -lc 'diff-highlight | less -r' -
+  pager = diffr | less -R
 
 [merge]
   ff = only
@@ -107,7 +107,7 @@
 	default = current
 
 [interactive]
-  diffFilter = diff-highlight
+  diffFilter = diffr
 
 [rebase]
   autoStash = true
