@@ -34,7 +34,7 @@ if fn.empty(fn.glob(install_path)) > 0 then
   api.nvim_command('packadd packer.nvim')
 end
 
-require('packer').startup(function()
+require('packer').startup({function()
   -- Packer can manage itself
   use 'wbthomason/packer.nvim'
 
@@ -82,11 +82,9 @@ require('packer').startup(function()
   use {
     'dense-analysis/ale',
     config = function()
-      local g = vim.g
-      local api = vim.api
-      -- g.ale_javascript_prettier_use_local_config = 1
-      -- g.ale_linter_aliases = {'jsx': ['css', 'javascript']}
-      -- g.ale_linters = {
+      -- vim.g.ale_javascript_prettier_use_local_config = 1
+      -- vim.g.ale_linter_aliases = {'jsx': ['css', 'javascript']}
+      -- vim.g.ale_linters = {
             -- \'jsx': ['stylelint', 'eslint'],
             -- \'javascript': ['eslint'],
             -- \'javascript.jsx': ['eslint'],
@@ -102,15 +100,15 @@ require('packer').startup(function()
       -- g.ale_fixers['typescript.tsx'] = ['eslint']
       -- g.ale_fixers['less'] = ['prettier']
       -- g.ale_fixers['python'] = ['autopep8']
-      g.ale_fix_on_save = 1
-      g.ale_echo_msg_error_str = 'E'
-      g.ale_echo_msg_warning_str = 'W'
-      g.ale_echo_msg_format = '[%linter%] %s (%code%)'
-      g.ale_lint_delay = 200
-      g.ale_virtualtext_cursor = 1
-      g.ale_linters_explicit = 1
-      api.nvim_set_keymap('n', '<C-[>', '<Plug>(ale_previous_wrap)', {silent = true, noremap = true})
-      api.nvim_set_keymap('n', '<C-]>', '<Plug>(ale_next_wrap)', {silent = true, noremap = true})
+      vim.g.ale_fix_on_save = 1
+      vim.g.ale_echo_msg_error_str = 'E'
+      vim.g.ale_echo_msg_warning_str = 'W'
+      vim.g.ale_echo_msg_format = '[%linter%] %s (%code%)'
+      vim.g.ale_lint_delay = 200
+      vim.g.ale_virtualtext_cursor = 1
+      vim.g.ale_linters_explicit = 1
+      vim.api.nvim_set_keymap('n', '<C-[>', '<Plug>(ale_previous_wrap)', {silent = true, noremap = true})
+      vim.api.nvim_set_keymap('n', '<C-]>', '<Plug>(ale_next_wrap)', {silent = true, noremap = true})
     end
   }
 
@@ -146,12 +144,21 @@ require('packer').startup(function()
   -- theme {{{
   -- use 'crusoexia/vim-monokai'
   use {
-    'patstockwell/vim-monokai-tasty',
+    'tanvirtin/monokai.nvim',
     config = function()
-      vim.g.vim_monokai_tasty_italic = 1
-      vim.cmd('colorscheme vim-monokai-tasty')
+      vim.cmd('syntax on')
+      vim.cmd('colorscheme monokai')
     end
   }
+
+  -- use {
+    -- 'patstockwell/vim-monokai-tasty',
+    -- disable = true,
+    -- config = function()
+      -- vim.g.vim_monokai_tasty_italic = 1
+      -- -- vim.cmd('colorscheme monokai')
+    -- end
+  -- }
   -- }}}
 
   -- snippets {{{
@@ -203,9 +210,14 @@ require('packer').startup(function()
 
   -- use 'neoclide/coc.nvim', {'branch': 'release'}
 
-  use 'pangloss/vim-javascript'
+  -- use 'pangloss/vim-javascript'
   -- use 'mxw/vim-jsx'
-  use 'maxmellon/vim-jsx-pretty'
+  -- use {
+    -- 'maxmellon/vim-jsx-pretty',
+    -- config = function()
+      -- vim.g.vim_jsx_pretty_colorful_config = 1
+    -- end
+  -- }
   use 'jxnblk/vim-mdx-js'
   -- use 'Galooshi/vim-import-js', { 'do': 'npm install -g import-js' }
 
@@ -220,11 +232,22 @@ require('packer').startup(function()
   -- -- use 'peitalin/vim-jsx-typescript'
   -- use 'elzr/vim-json'
 
-  -- let g:vim_jsx_pretty_colorful_config = 1 -- default 0
+  -- shows SyntaxAttr highlighting attributes of char under cursor
+  use {
+    'vim-scripts/SyntaxAttr.vim',
+    config = function()
+      vim.api.nvim_set_keymap('n', '<leader>a', ':call SyntaxAttr()<CR>', {noremap = true})
+    end
+  }
+end,
+config = {
+  display = {
+    open_fn = function()
+      return require('packer.util').float({ border = 'single' })
+    end
+  }
+}})
 
-  -- shows SyntaxAttrx highlighting attributes of char under cursor
-  -- use 'vim-scripts/SyntaxAttr.vim'
-end)
 
 
 g.mapleader = ' '
@@ -250,10 +273,8 @@ cmd 'hi CursorLine ctermbg=186'
 -- g.monokai_term_italic = 1
 -- g.monokai_gui_italic = 1
 -- cmd 'colorscheme monokai'
--- g.airline_theme = 'monokai_tasty'
 -- set t_Co=256 --256 colors
 
--- cmd 'syntax on'
 
 -- For conceal markers.
 if fn.has('conceal') then
@@ -316,7 +337,6 @@ ts.setup {ensure_installed = 'maintained', highlight = {enable = true}}
 
 g.javascript_plugin_flow = 0 -- disable flow for vim-javascript
 g.jsx_ext_required = 0
-g.vim_jsx_pretty_colorful_config = 1
 
 -- NERDCommenter {{{
 -- Add spaces after comment delimiters by default
@@ -325,8 +345,8 @@ g.NERDSpaceDelims = 1
 
 -- Some FZF Configuration
 opt.grepprg = "rg --vimgrep"
-vim.env['$FZF_DEFAULT_COMMAND'] = 'rg --files --hidden --follow -g "!.git/*" -g "!south_migrations" -g "!src/sentry/south" -g "!CHANGES" -g "!vendor" -g "!tests/fixtures/integration-docs/*" -g "!static/dist" -g "!static/vendor" -g "!src/sentry/static/sentry"'
-vim.env['$FZF_DEFAULT_OPTS'] = '--layout=reverse'
+vim.env['FZF_DEFAULT_COMMAND'] = 'rg --files --hidden --follow -g "!.git/*" -g "!south_migrations" -g "!src/sentry/south" -g "!CHANGES" -g "!vendor" -g "!tests/fixtures/integration-docs/*" -g "!static/dist" -g "!static/vendor" -g "!src/sentry/static/sentry"'
+vim.env['FZF_DEFAULT_OPTS'] = '--layout=reverse'
 
 local augroups = {
   fzf_setup = {
@@ -388,25 +408,6 @@ nvim_create_augroups(augroups)
 
 -- cmd([[filetype plugin indent on]])
 -- cmd([[syntax on]])
-
--- airline config {{{
--- Remove file encoding type
--- Enable the list of buffers
--- let g:airline#extensions#tabline#enabled = 0
-
--- " Show just the filename
--- let g:airline#extensions#tabline#fnamemod = ':t'
--- let g:airline_powerline_fonts = 1
-
--- let g:airline_section_y = ''
--- " Remove filetype
--- let g:airline_section_x = airline#section#create_right(['tagbar'])
--- " Remove git hunk info (only have branch)
--- let g:airline_section_b = airline#section#create(['branch'])
--- }}}
-
--- so deoplete can do completions
--- let g:jedi#completions_enabled = 0
 
 -- Snippet configuration {{{
 -- key mappings
