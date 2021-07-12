@@ -93,7 +93,7 @@ table.insert(gls.left, {
       local alias = {n = 'N',i = 'I',c= 'C',v= 'V',V= 'VL', [''] = 'VB'}
       vim.cmd("hi GalaxyViMode guifg=" .. mode_color[mode])
 
-      return alias[mode] .. ' '
+      return (alias[mode] or colors.red) .. ' '
     end,
     highlight = {colors.line_bg, colors.highlight},
     separator = '',
