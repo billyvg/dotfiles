@@ -8,7 +8,7 @@ local env = vim.env  -- environment variables
 -- }}}
 
 -- {{{ Helper functions
-local function map(mode, lhs, rhs, opts)
+function map(mode, lhs, rhs, opts)
   local options = {noremap = true}
   if opts then options = vim.tbl_extend('force', options, opts) end
   vim.api.nvim_set_keymap(mode, lhs, rhs, options)
@@ -32,7 +32,7 @@ end
 --- }}}
 
 -- {{{ Packer bootstrap
-require('packer-bootstrap')
+-- require('packer-bootstrap')
 -- }}}
 
 require('packer').startup({function(use)
@@ -41,8 +41,24 @@ require('packer').startup({function(use)
 
   -- {{{ Plugin: fzf
   use { 'junegunn/fzf', run = function() vim.fn['fzf#install']() end }
-  use 'junegunn/fzf.vim'
+  use {
+    'junegunn/fzf.vim',
+    config = function()
+      map('n', '<C-p>', ':FZF<CR>')
+      map('n', '<leader>f', ':Rg<CR>')
+    end
+  }
+  -- use {
+    -- 'nvim-telescope/telescope.nvim',
+    -- requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}},
+    -- config = function ()
+        -- map('n', '<C-p>', ':Telescope find_files find_command=rg,--hidden<CR>')
+        -- map('n', '<leader>ff', ':Telescope live_grep<CR>')
+      -- end
+  -- }
   -- }}}
+
+
 
   -- {{{ Plugin: treesitter
   use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }
@@ -97,11 +113,56 @@ require('packer').startup({function(use)
           calc = true;
           nvim_lsp = true;
           nvim_lua = true;
-          vsnip = true;
-          ultisnips = true;
-          luasnip = true;
+          vsnip = false;
+          ultisnips = false;
+          luasnip = false;
         };
       })
+      local t = function(str)
+        return vim.api.nvim_replace_termcodes(str, true, true, true)
+      end
+
+      local check_back_space = function()
+          local col = vim.fn.col('.') - 1
+          return col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') ~= nil
+      end
+
+      -- Use (s-)tab to:
+      --- move to prev/next item in completion menuone
+      --- jump to prev/next snippet's placeholder
+      _G.tab_complete = function()
+        if vim.fn.pumvisible() == 1 then
+          return t "<C-n>"
+        -- elseif vim.fn['vsnip#available'](1) == 1 then
+          -- return t "<Plug>(vsnip-expand-or-jump)"
+        elseif check_back_space() then
+          return t "<Tab>"
+        else
+          return vim.fn['compe#complete']()
+        end
+      end
+
+      _G.s_tab_complete = function()
+        if vim.fn.pumvisible() == 1 then
+          return t "<C-p>"
+        -- elseif vim.fn['vsnip#jumpable'](-1) == 1 then
+          -- return t "<Plug>(vsnip-jump-prev)"
+        else
+          -- If <S-Tab> is not working in your terminal, change it to <C-h>
+          return t "<S-Tab>"
+        end
+      end
+
+      vim.api.nvim_set_keymap("i", "<Tab>", "v:lua.tab_complete()", {expr = true})
+      vim.api.nvim_set_keymap("s", "<Tab>", "v:lua.tab_complete()", {expr = true})
+      vim.api.nvim_set_keymap("i", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
+      vim.api.nvim_set_keymap("s", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
+
+      vim.api.nvim_set_keymap("i", "<C-Space>", "compe#complete()", {expr = true, silent = true, noremap = true})
+      vim.api.nvim_set_keymap("i", "<CR>", [[compe#confirm(luaeval("require 'nvim-autopairs'.autopairs_cr()"))]], {expr = true, silent = true, noremap = true})
+      vim.api.nvim_set_keymap("i", "<C-e>", "compe#close('<C-e>')", {expr = true, silent = true, noremap = true})
+      vim.api.nvim_set_keymap("i", "<C-f>", "compe#scroll({ 'delta': +4 })", {expr = true, silent = true, noremap = true})
+      vim.api.nvim_set_keymap("i", "<C-d>", "compe#scroll({ 'delta': -4 })", {expr = true, silent = true, noremap = true})
     end
   }
 
@@ -318,7 +379,7 @@ require('packer').startup({function(use)
 
   use {
     'tpope/vim-rhubarb', -- to support :GBrowse for github
-    cmd = 'GBrowse'
+    -- cmd = 'GBrowse'
   }
 
   use {
@@ -358,6 +419,14 @@ require('packer').startup({function(use)
     end
   }
 
+  -- use {
+    -- 'projekt0n/github-nvim-theme',
+    -- config = function()
+      -- require('github-theme').setup()
+    -- end
+  -- }
+
+
   -- use 'crusoexia/vim-monokai'
   -- use {
     -- 'tanvirtin/monokai.nvim',
@@ -386,6 +455,59 @@ require('packer').startup({function(use)
   -- }}}
 
   -- {{{ Plugin: Autoclose
+  use {
+    'windwp/nvim-autopairs',
+    config = function()
+      local npairs = require('nvim-autopairs')
+      npairs.setup()
+      require("nvim-autopairs.completion.compe").setup({
+        map_cr = true, --  map <CR> on insert mode
+        map_complete = true -- it will auto insert `(` after select function or method item
+      })
+      -- local remap = vim.api.nvim_set_keymap
+
+      -- -- skip it, if you use another global object
+      -- _G.MUtils= {}
+
+      -- vim.g.completion_confirm_key = ""
+
+      -- MUtils.completion_confirm=function()
+        -- if vim.fn.pumvisible() ~= 0  then
+          -- if vim.fn.complete_info()["selected"] ~= -1 then
+            -- require'completion'.confirmCompletion()
+            -- return npairs.esc("<c-y>")
+          -- else
+            -- vim.api.nvim_select_popupmenu_item(0 , false , false ,{})
+            -- require'completion'.confirmCompletion()
+            -- return npairs.esc("<c-n><c-y>")
+          -- end
+        -- else
+          -- return npairs.autopairs_cr()
+        -- end
+      -- end
+
+      -- -- remap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap = true})
+    end
+  }
+
+  -- use {
+    -- 'windwp/nvim-ts-autotag',
+    -- config = function ()
+      -- require('nvim-ts-autotag').setup()
+      -- vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(
+        -- vim.lsp.diagnostic.on_publish_diagnostics,
+        -- {
+          -- underline = true,
+          -- virtual_text = {
+            -- spacing = 5,
+            -- severity_limit = 'Warning',
+          -- },
+          -- update_in_insert = true,
+        -- }
+      -- )
+    -- end
+  -- }
+
   -- use 'jiangmiao/auto-pairs'
   -- use 'Raimondi/delimitMate'
   -- use 'Shougo/neopairs.vim'
@@ -482,8 +604,8 @@ opt.modelines = 1
 if fn.has('termguicolors') then
   opt.termguicolors = true              -- True color support
 end
-opt.background = "dark"                 -- Dark background
-opt.undodir = '.undodir'                -- Persistent undo
+opt.background = "dark"                               -- Dark background
+opt.undodir = vim.fn.stdpath('data') .. '.undodir'    -- Persistent undo
 opt.undofile = true                     --
 opt.tabstop = 2                         -- Number of spaces tabs count for
 opt.softtabstop = 2                     --
@@ -520,14 +642,12 @@ cmd 'hi CursorLine ctermbg=186'
 
 -- {{{ Key Mappings
 -- <Tab> to navigate the completion menu
-map('i', '<Tab>', 'pumvisible() ? "\\<C-n>" : "\\<Tab>"', {expr = true})
-map('i', '<S-Tab>', 'pumvisible() ? "\\<C-p>" : "\\<Tab>"', {expr = true})
+-- map('i', '<Tab>', 'pumvisible() ? "\\<C-n>" : "\\<Tab>"', {expr = true})
+-- map('i', '<S-Tab>', 'pumvisible() ? "\\<C-p>" : "\\<Tab>"', {expr = true})
 
-map('i', '<cr>', 'pumvisible() ? "\\<C-y>" : "\\<C-g>u\\<CR>"', {expr = true}) -- enter to confirm delete
+-- map('i', '<cr>', 'pumvisible() ? "\\<C-y>" : "\\<C-g>u\\<CR>"', {expr = true}) -- enter to confirm delete
 
 
-map('n', '<C-p>', ':FZF<CR>')
-map('n', '<leader>f', ':Rg<CR>')
 map('n', 'gp', ':ALEFix<CR>')
 -- map('n', '<leader>es', ':execute ":split " . g:neosnippet#snippets_directory')
 
@@ -589,11 +709,14 @@ require('nvim-treesitter.configs').setup({
     'css',
   },
   highlight = {
-    enable = true
+    enable = true,
   },
   indent = {
-    enable = true
-  }
+    enable = true,
+  },
+  autotag = {
+    enable = true,
+  },
 })
 -- }}}
 
