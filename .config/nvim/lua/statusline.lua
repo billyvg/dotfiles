@@ -89,7 +89,7 @@ table.insert(gls.left, {
 table.insert(gls.left, {
   ViMode = {
     provider = function()
-      mode = vim.fn.mode()
+      local mode = vim.fn.mode()
       local alias = {n = 'N',i = 'I',c= 'C',v= 'V',V= 'VL', [''] = 'VB'}
       vim.cmd("hi GalaxyViMode guifg=" .. mode_color[mode])
 
@@ -206,11 +206,19 @@ table.insert(gls.left, {
   }
 })
 
+table.insert(gls.left, {
+  LeftEnd = {
+    provider = function() return '' end,
+    -- separator = '',
+    highlight = {colors.highlight,colors.line_bg},
+    -- separator_highlight = {colors.highlight,colors.line_bg},
+  }
+})
 
 table.insert(gls.left, {
   DiagnosticError = {
     provider = 'DiagnosticError',
-    icon = 'x',
+    icon = '',
     highlight = {colors.red,colors.line_bg}
   }
 })
@@ -223,19 +231,11 @@ table.insert(gls.left, {
 table.insert(gls.left, {
   DiagnosticWarn = {
     provider = 'DiagnosticWarn',
-    icon = '!',
+    icon = '',
     highlight = {colors.blue,colors.line_bg},
   }
 })
 
-table.insert(gls.left, {
-  LeftEnd = {
-    provider = function() return '' end,
-    separator = '',
-    highlight = {colors.highlight,colors.highlight},
-    separator_highlight = {colors.highlight,colors.line_bg},
-  }
-})
 
 table.insert(gls.right, {
   FileFormat = {
@@ -265,8 +265,17 @@ table.insert(gls.right, {
 
 
 gls.short_line_left[1] = {
-  BufferType = {
-    provider = 'FileTypeName',
+  FileIcon = {
+    provider = 'FileIcon',
+    condition = condition.buffer_not_empty,
+    highlight = {require('galaxyline.provider_fileinfo').get_file_icon_color,colors.highlight},
+  },
+}
+
+gls.short_line_left[2] = {
+  FileNameShort = {
+    provider = {'FileName'},
+    condition = condition.buffer_not_empty,
     separator = '',
     separator_highlight = {colors.highlight,colors.bg},
     highlight = {colors.light_grey,colors.highlight}
