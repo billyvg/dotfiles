@@ -58,7 +58,19 @@ require('packer').startup({function(use)
   -- }
   -- }}}
 
-
+  -- {{{ Plugin: linter
+    -- use {
+      -- 'mfussenegger/nvim-lint',
+      -- config = function()
+        -- require('lint').linters_by_ft = {
+          -- typescript = {'eslint',},
+          -- javascript = {'eslint',},
+          -- ["typescript.jsx"] = {'eslint',},
+          -- ["javascript.jsx"] = {'eslint',},
+        -- }
+      -- end
+    -- }
+  -- }}}
 
   -- {{{ Plugin: treesitter
   use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }
@@ -351,14 +363,21 @@ require('packer').startup({function(use)
             -- \'typescript.tsx': ['eslint'],
             -- \}
       -- g.ale_javascript_eslint_use_global = 0 -- this works more reliably
-      -- g.ale_fixers = {}
-      -- g.ale_fixers['json'] = ['prettier']
-      -- g.ale_fixers['javascript'] = ['eslint']
-      -- g.ale_fixers['javascript.jsx'] = ['eslint', 'stylelint']
-      -- g.ale_fixers['typescript'] = ['eslint', 'prettier']
-      -- g.ale_fixers['typescript.tsx'] = ['eslint']
-      -- g.ale_fixers['less'] = ['prettier']
-      -- g.ale_fixers['python'] = ['autopep8']
+      vim.g.ale_fixers = {
+        json = "prettier",
+        javascript = "eslint",
+        ["javascript.jsx"] = {"eslint", "stylelint"},
+        typescript = "eslint",
+        ["typescript.tsx"] = {"eslint", "stylelint"},
+        less = "prettier",
+      }
+      -- vim.g.ale_fixers['json'] = ['prettier']
+      -- vim.g.ale_fixers['javascript'] = ['eslint']
+      -- vim.g.ale_fixers['javascript.jsx'] = ['eslint', 'stylelint']
+      -- vim.g.ale_fixers['typescript'] = ['eslint', 'prettier']
+      -- vim.g.ale_fixers['typescript.tsx'] = ['eslint']
+      -- vim.g.ale_fixers['less'] = ['prettier']
+      -- vim.g.ale_fixers['python'] = ['autopep8']
       vim.g.ale_fix_on_save = 1
       vim.g.ale_echo_msg_error_str = 'E'
       vim.g.ale_echo_msg_warning_str = 'W'
