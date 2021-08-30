@@ -21,7 +21,7 @@ SAVEHIST=10000
 # export PATH="/usr/local/opt/node@10/bin:/usr/local/opt/gettext/bin:$PYENV_ROOT/bin:$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$HOME/.cargo/bin:/usr/local/bin:$PATH"
 export PATH="$HOME/.cargo/bin:/usr/local/bin:/usr/local/opt/gettext/bin:$PATH"
 
- [ -f $ZSH/oh-my-zsh.sh ] && source $ZSH/oh-my-zsh.sh
+[ -f $ZSH/oh-my-zsh.sh ] && source $ZSH/oh-my-zsh.sh
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 # infocmp $TERM | sed 's/kbs=^[hH]/kbs=\\177/' > $TERM.ti
 # tic $TERM.ti
@@ -143,7 +143,6 @@ fi
 
 eval "$(scmpuff init -s)"
 eval "$(direnv hook zsh)"
-
 
 export NODE_OPTIONS=--max_old_space_size=8192
 export VOLTA_HOME="$HOME/.volta"
