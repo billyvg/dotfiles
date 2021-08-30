@@ -330,8 +330,8 @@ require('packer').startup({function(use)
   use {
     'scrooloose/nerdcommenter',
     config = function()
-      vim.api.nvim_set_keymap('n', '<leader>/', ':call NERDComment(0, "toggle")<CR>', {noremap = true})
-      vim.api.nvim_set_keymap('v', '<leader>/', ':call NERDComment(0, "toggle")<CR>', {noremap = true})
+      vim.api.nvim_set_keymap('n', '<leader>/', ':call nerdcommenter#Comment(0, "toggle")<CR>', {noremap = true})
+      vim.api.nvim_set_keymap('v', '<leader>/', ':call nerdcommenter#Comment(0, "toggle")<CR>', {noremap = true})
     end
   }
   -- }}}
