@@ -344,7 +344,6 @@ require('packer').startup({function(use)
 
   -- {{{ Plugins: tmux integrations
   use 'christoomey/vim-tmux-navigator' -- allows us to use vim hotkeys to move into tmux panes
-  use 'tmux-plugins/vim-tmux-focus-events'
   use 'tmux-plugins/vim-tmux' -- for editing .tmux.conf
   -- }}}
 
@@ -621,7 +620,7 @@ config = {
 g.mapleader = ' '
 opt.modelines = 1
 if fn.has('termguicolors') then
-  opt.termguicolors = true              -- True color support
+  opt.termguicolors = true                       -- True color support
 end
 opt.background = "dark"                               -- Dark background
 opt.undodir = vim.fn.stdpath('data') .. '.undodir'    -- Persistent undo
@@ -634,8 +633,8 @@ opt.wrap = false
 opt.colorcolumn = { 120 }
 opt.mouse = "a"
 opt.cursorline = true
-opt.signcolumn = "yes"                  -- always show git gutter
-opt.showmode = false                    -- hide modeline
+opt.signcolumn = "yes"                           -- always show git gutter
+opt.showmode = false                             -- hide modeline
 opt.foldmethod = "marker"
 
 -- {{{ Conceal markers
