@@ -45,17 +45,76 @@ require('packer').startup({function(use)
     'junegunn/fzf.vim',
     config = function()
       map('n', '<C-p>', ':FZF<CR>')
-      map('n', '<leader>f', ':Rg<CR>')
+      map('n', '<leader>f', ':RG<CR>')
+
+      vim.api.nvim_exec([[
+        function! RipgrepFzf2(query, fullscreen)
+          let command_fmt = 'rg --column --line-number --no-heading --follow --color=always --smart-case -- %s || true'
+          let initial_command = printf(command_fmt, shellescape(a:query))
+          let reload_command = printf(command_fmt, '{q}')
+          let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
+          call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
+        endfunction
+
+        command! -nargs=* -bang RG call RipgrepFzf2(<q-args>, <bang>0)
+      ]], false)
+      -- function RipgrepFzf(query, fullscreen)
+        -- local command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
+        -- local initial_command = vim.fn.printf(command_fmt, vim.fn.shellescape(query))
+        -- local reload_command = vim.fn.printf(command_fmt, '{q}')
+        -- local spec = {
+          -- options = {
+            -- '--phony',
+            -- '--query',
+            -- query,
+            -- '--bind',
+            -- 'change:reload:' + reload_command
+          -- }
+        -- }
+        -- vim.fn['fzf#vim#grep'](initial_command, 1, vim.fn['fzf#vim#with_preview'](spec), fullscreen)
+        -- -- vim.g.RpgrepFzf = RipgrepFzf
+      -- end
+
+
+      -- vim.api.nvim_command('command! -nargs=* -bang RG call g:RipgrepFzf(<q-args>, <bang>0)')
     end
   }
   -- use {
     -- 'nvim-telescope/telescope.nvim',
-    -- requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}},
+    -- requires = {
+      -- {'nvim-lua/popup.nvim'},
+      -- {'nvim-lua/plenary.nvim'},
+      -- {'nvim-telescope/telescope-fzf-native.nvim', run = 'make'}
+    -- },
     -- config = function ()
-        -- map('n', '<C-p>', ':Telescope find_files find_command=rg,--hidden<CR>')
+        -- map('n', '<C-p>', ':Telescope find_files<CR>')
         -- map('n', '<leader>ff', ':Telescope live_grep<CR>')
+        -- require('telescope').load_extension('fzf')
       -- end
   -- }
+  -- use {
+    -- 'camspiers/snap', rocks = {'fzy'},
+    -- config = function()
+      -- local snap = require'snap'
+      -- snap.register.map({"n"}, {"<C-p>"}, function ()
+        -- snap.run {
+          -- producer = snap.get'consumer.fzy'(snap.get'producer.ripgrep.file'),
+          -- select = snap.get'select.file'.select,
+          -- multiselect = snap.get'select.file'.multiselect,
+          -- views = {snap.get'preview.file'}
+        -- }
+      -- end)
+      -- snap.register.map({"n"}, {"<Leader>f"}, function ()
+        -- snap.run {
+          -- producer = snap.get'producer.ripgrep.vimgrep',
+          -- select = snap.get'select.vimgrep'.select,
+          -- multiselect = snap.get'select.vimgrep'.multiselect,
+          -- views = {snap.get'preview.vimgrep'}
+        -- }
+      -- end)
+    -- end
+  -- }
+
   -- }}}
 
   -- {{{ Plugin: linter
@@ -354,13 +413,13 @@ require('packer').startup({function(use)
     config = function()
       -- vim.g.ale_javascript_prettier_use_local_config = 1
       -- vim.g.ale_linter_aliases = {'jsx': ['css', 'javascript']}
-      -- vim.g.ale_linters = {
-            -- \'jsx': ['stylelint', 'eslint'],
-            -- \'javascript': ['eslint'],
-            -- \'javascript.jsx': ['eslint'],
-            -- \'typescript': ['eslint'],
-            -- \'typescript.tsx': ['eslint'],
-            -- \}
+      vim.g.ale_linters = {
+        jsx = {'stylelint', 'eslint'},
+        javascript = {'eslint'},
+        ['javascript.jsx'] = {'eslint'},
+        typescript = {'eslint'},
+        ['typescript.tsx'] = {'eslint'},
+      }
       -- g.ale_javascript_eslint_use_global = 0 -- this works more reliably
       vim.g.ale_fixers = {
         json = "prettier",
@@ -369,6 +428,7 @@ require('packer').startup({function(use)
         typescript = "eslint",
         ["typescript.tsx"] = {"eslint", "stylelint"},
         less = "prettier",
+        -- python = "black",
       }
       -- vim.g.ale_fixers['json'] = ['prettier']
       -- vim.g.ale_fixers['javascript'] = ['eslint']
@@ -745,7 +805,7 @@ g.NERDSpaceDelims = 1
 
 -- Some FZF Configuration
 opt.grepprg = "rg --vimgrep"
-vim.env['FZF_DEFAULT_COMMAND'] = 'rg --files --hidden --follow -g "!.git/*" -g "!south_migrations" -g "!src/sentry/south" -g "!CHANGES" -g "!vendor" -g "!tests/fixtures/integration-docs/*" -g "!static/dist" -g "!static/vendor" -g "!src/sentry/static/sentry"'
+vim.env['FZF_DEFAULT_COMMAND'] = "rg --color=never --files --follow --hidden -g '!.git/*'"
 vim.env['FZF_DEFAULT_OPTS'] = '--layout=reverse'
 
 local augroups = {
