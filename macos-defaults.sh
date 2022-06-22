@@ -12,7 +12,6 @@ defaults write -g ApplePressAndHoldEnabled -bool false
 
 # Use AirDrop over every interface. srsly this should be a default.
 defaults write com.apple.NetworkBrowser BrowseAllInterfaces 1
-
 # Always open everything in Finder's list view. This is important.
 defaults write com.apple.Finder FXPreferredViewStyle Nlsv
 
@@ -39,3 +38,12 @@ defaults write com.apple.Safari IncludeDevelopMenu -bool true
 defaults write com.apple.Safari WebKitDeveloperExtrasEnabledPreferenceKey -bool true
 defaults write com.apple.Safari "com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled" -bool true
 defaults write NSGlobalDomain WebKitDeveloperExtras -bool true
+
+# Set dock to left and autohide
+defaults write com.apple.dock "orientation" -string "left"
+defaults write com.apple.dock "tilesize" -int "36"
+defaults write com.apple.dock "autohide" -bool "true"
+killall Dock
+
+
+
