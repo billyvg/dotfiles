@@ -44,7 +44,7 @@
   quotepath = false
   whitespace = trailing-space,space-before-tab
   editor = nvim
-  pager = diffr | less -R
+  ; pager = diffr | less -R
 
 [merge]
   ff = only
@@ -75,6 +75,7 @@
   # https://git-scm.com/docs/git-config#git-config-pushdefault
 
   followTags = true
+  autoSetupRemote = true
   # Because I get sick of telling git to do it manually
   # https://git-scm.com/docs/git-config#git-config-pushfollowTags
 
@@ -98,6 +99,8 @@
   algorithm = patience
   submodule = log
   compactionHeuristic = 1
+  colorMoved = default
+
 
 [status]
   submoduleSummary = true
@@ -106,11 +109,30 @@
   rebase = merges
 	default = current
 
+[pager]
+    diff = delta
+    log = delta
+    reflog = delta
+    show = delta
+
+[delta]
+  line-numbers = true
+
+    ; syntax-theme = Monokai Extended
+    ; navigate = true
+    ; commit-decoration-style = blue ol
+    ; commit-style = raw
+    ; file-style = omit
+    ; hunk-header-decoration-style = blue box
+    ; hunk-header-line-number-style = "#067a00"
+    ; hunk-header-style = file line-number syntax
+
 [interactive]
-  diffFilter = diffr
+  diffFilter = delta --color-only --features=interactive
 
 [rebase]
-  autoStash = true
+  autostash = true
+  autosquash = true
 
 [credential]
 	helper = osxkeychain
