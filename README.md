@@ -25,6 +25,7 @@ volta install node@16
 ```bash
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 ```
+Then when inside of `tmux`, `<prefix> + I` to install the `tmux` plugins.
 
 
 ### Manual
