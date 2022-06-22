@@ -152,3 +152,9 @@ export BAT_THEME='Monokai Extended'
 export PATH="$PATH:/Users/billy/.bin"
 
 [ -f ~/.sentryrc ] && source ~/.sentryrc
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/billy/Downloads/google-cloud-sdk 2/path.zsh.inc' ]; then . '/Users/billy/Downloads/google-cloud-sdk 2/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/billy/Downloads/google-cloud-sdk 2/completion.zsh.inc' ]; then . '/Users/billy/Downloads/google-cloud-sdk 2/completion.zsh.inc'; fi
