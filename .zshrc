@@ -82,8 +82,8 @@ export NODE_REPL_HISTORY_FILE=~/.node_repl
 alias reload!='. ~/.zshrc'
 alias zshconfig="nvim ~/.zshrc"
 alias ohmyzsh="nvim ~/.oh-my-zsh"
-alias pr="git push && hub pull-request -o"
-alias prd="git push && hub pull-request -o -d"
+alias pr="gh pr create --fill && gh pr view --web"
+alias prd="git push && gh pr create --fill --draft && gh pr view --web"
 alias vim=nvim
 alias vimconfig="nvim ~/.config/nvim/init.vim"
 alias config='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
