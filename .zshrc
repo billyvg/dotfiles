@@ -1,40 +1,54 @@
-PROFILE_STARTUP=false
-if [[ "$PROFILE_STARTUP" == true ]]; then
-    # http://zsh.sourceforge.net/Doc/Release/Prompt-Expansion.html
-    PS4=$'%D{%M%S%.} %N:%i> '
-    exec 3>&2 2>$HOME/tmp/startlog.$$
-    setopt xtrace prompt_subst
+# clone antidote if necessary
+[[ -e ~/.antidote ]] || git clone https://github.com/mattmc3/antidote.git ~/.antidote
+
+(( ${+commands[direnv]} )) && emulate zsh -c "$(direnv export zsh)"
+
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# Path to your oh-my-zsh installation.
-export ZSH=${HOME}/.oh-my-zsh
-export LSCOLORS="exfxcxdxbxegedabagacad"
-export CLICOLOR=true
+(( ${+commands[direnv]} )) && emulate zsh -c "$(direnv hook zsh)"
+
+# Enable the "new" completion system (compsys).
+# autoload -Uz compinit && compinit
+# [[ ~/.zcompdump.zwc -nt ~/.zcompdump ]] || zcompile -R -- ~/.zcompdump{.zwc,}
 
 # ZSH
-ZSH_THEME="refined"
+ZSH_AUTOSUGGEST_MANUAL_REBIND=1
 HISTFILE=~/.zsh_history
 HISTSIZE=10000
 SAVEHIST=10000
 
 export PATH="$HOME/.cargo/bin:/usr/local/bin:/usr/local/opt/gettext/bin:$PATH"
+export LSCOLORS="exfxcxdxbxegedabagacad"
+export CLICOLOR=true
 
-# Better history
-# Credits to https://coderwall.com/p/jpj_6q/zsh-better-history-searching-with-arrow-keys
-# autoload -U up-line-or-beginning-search
-# autoload -U down-line-or-beginning-search
-# zle -N up-line-or-beginning-search
-# zle -N down-line-or-beginning-search
-# bindkey "^[[A" up-line-or-beginning-search # Up
-# bindkey "^[[B" down-line-or-beginning-search # Down
 
-# zsh-autosuggestions https://github.com/zsh-users/zsh-autosuggestions/blob/master/INSTALL.md
-plugins=(osx node npm tmux history-substring-search zsh-autosuggestions)
+autoload -Uz compinit && compinit
 
-[ -f $ZSH/oh-my-zsh.sh ] && source $ZSH/oh-my-zsh.sh
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-# infocmp $TERM | sed 's/kbs=^[hH]/kbs=\\177/' > $TERM.ti
-# tic $TERM.ti
+# source antidote
+. ~/.antidote/antidote.zsh
+
+# generate and source plugins from ~/.zsh_plugins.txt
+antidote load
+
+if [ -f ~/.fzf.zsh ]; then
+  source ~/.fzf.zsh
+else
+  (( $+commands[brew] )) && $(brew --prefix)/opt/fzf/install
+fi
+
+# Load plugins.
+eval "$(scmpuff init -s)"
+
+# thefuck
+eval $(thefuck --alias)
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 setopt NO_BG_NICE # don't nice background tasks
 setopt NO_HUP
@@ -64,22 +78,12 @@ bindkey '^[[3~' delete-char
 bindkey '^?' backward-delete-char
 
 
-if $(gls &>/dev/null)
-then
-  alias ls="gls -F --color"
-  alias l="gls -lAh --color"
-  alias ll="gls -l --color"
-  alias la='gls -A --color'
-fi
-
-
 # NODE/NVM
 export NODE_REPL_HISTORY_FILE=~/.node_repl
 
 # ALIASES
 alias reload!='. ~/.zshrc'
 alias zshconfig="nvim ~/.zshrc"
-alias ohmyzsh="nvim ~/.oh-my-zsh"
 alias pr="gh pr create --fill && gh pr view --web"
 alias prd="git push && gh pr create --fill --draft && gh pr view --web"
 alias vim=nvim
@@ -120,28 +124,6 @@ alias yarnconflict="git checkout origin/master -- yarn.lock && yarn"
 alias gprunemerged='git checkout master && comm -12 <(git branch | sed "s/ *//g") <(git remote prune origin | sed "s/^.*origin\///g") | xargs -L1 -J % git branch -D %'
 alias gpm='git checkout main && comm -12 <(git branch | sed "s/ *//g") <(git remote prune origin | sed "s/^.*origin\///g") | xargs -L1 -J % git branch -D %'
 
-# thefuck
-eval $(thefuck --alias)
-# fuck () {
-    # TF_HISTORY=$(fc -ln -10)
-    # TF_CMD=$(
-        # TF_ALIAS=fuck
-        # TF_SHELL_ALIASES=$(alias)
-        # TF_HISTORY=$TF_HISTORY
-        # PYTHONIOENCODING=utf-8
-        # thefuck THEFUCK_ARGUMENT_PLACEHOLDER $*
-    # ) && eval $TF_CMD;
-    # test -n "$TF_CMD" && print -s $TF_CMD
-# }
-
-if [[ "$PROFILE_STARTUP" == true ]]; then
-    unsetopt xtrace
-    exec 2>&3 3>&-
-fi
-
-eval "$(scmpuff init -s)"
-eval "$(direnv hook zsh)"
-
 export NODE_OPTIONS=--max_old_space_size=8192
 export VOLTA_HOME="$HOME/.volta"
 export PATH="$VOLTA_HOME/bin:$PATH"
@@ -156,6 +138,4 @@ if [ -f '/Users/billy/Downloads/google-cloud-sdk 2/path.zsh.inc' ]; then . '/Use
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/billy/Downloads/google-cloud-sdk 2/completion.zsh.inc' ]; then . '/Users/billy/Downloads/google-cloud-sdk 2/completion.zsh.inc'; fi
-
-eval "$(starship init zsh)"
 

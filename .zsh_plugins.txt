@@ -1,0 +1,14 @@
+zsh-users/zsh-completions
+zsh-users/zsh-syntax-highlighting
+zsh-users/zsh-history-substring-search
+zsh-users/zsh-autosuggestions
+
+# ohmyzsh/ohmyzsh   path:plugins/gh
+# ohmyzsh/ohmyzsh   path:plugins/node
+# ohmyzsh/ohmyzsh   path:plugins/npm
+# ohmyzsh/ohmyzsh   path:plugins/ripgrep
+# ohmyzsh/ohmyzsh   path:plugins/thefuck
+# ohmyzsh/ohmyzsh   path:plugins/tmux
+
+romkatv/powerlevel10k
+
