@@ -1,8 +1,8 @@
 cask_args appdir: "/Applications"
 
 tap "homebrew/bundle"
-tap "caskroom/cask" || true
-tap "caskroom/fonts" || true
+tap "homebrew/cask" || true
+tap "homebrew/cask-fonts" || true
 tap "neovim/neovim" || true
 
 brew "fzf"
@@ -15,21 +15,27 @@ brew "thefuck"
 brew "tmux"
 brew "watchman"
 brew "wget"
-brew "alacritty"
-brew "kitty"
+brew "volta"
+brew "gh"
+brew "git-delta" # for git diffing
 
 # Casks
-cask "font-hack"
-# cask "sauce-connect"
+# cask "alacritty"
+cask "kitty"
+
+# cask "font-hack"
+# cask "font-hack-nerd-font"
+cask "font-fira-code-nerd-font"
 cask "1password"
 cask "firefox"
 cask "google-chrome"
 cask "slack"
-cask "docker"
+# cask "docker"
 cask "chromedriver"
 
-# Mac App Store
+### Mac App Store ###
 brew "mas"
 # mas "Xcode", id: 497799835
-mas "Divvy", id: 413857545
-# mas "Wunderlist", id: 410628904
+# mas "Divvy", id: 413857548 # Doesn't support Apple Silicon
+mas "1Password for Safari", id: 1569813296 # 1password Safari extension
+mas "WhatsApp Desktop", id: 1147396723
