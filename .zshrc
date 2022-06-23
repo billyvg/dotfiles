@@ -76,6 +76,11 @@ bindkey '^[[5D' beginning-of-line
 bindkey '^[[5C' end-of-line
 bindkey '^[[3~' delete-char
 bindkey '^?' backward-delete-char
+bindkey '^u' backward-kill-line
+
+autoload -U edit-command-line
+zle -N edit-command-line
+bindkey '^x^e' edit-command-line
 
 
 # NODE/NVM
@@ -89,7 +94,6 @@ alias prd="git push && gh pr create --fill --draft && gh pr view --web"
 alias vim=nvim
 alias vimconfig="nvim ~/.config/nvim/init.vim"
 alias config='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
-alias code="code-insiders" # vscode
 
 # The rest of my fun git aliases
 alias gl='git pull --prune'
