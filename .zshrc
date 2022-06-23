@@ -17,9 +17,19 @@ HISTFILE=~/.zsh_history
 HISTSIZE=10000
 SAVEHIST=10000
 
-
-# export PATH="/usr/local/opt/node@10/bin:/usr/local/opt/gettext/bin:$PYENV_ROOT/bin:$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$HOME/.cargo/bin:/usr/local/bin:$PATH"
 export PATH="$HOME/.cargo/bin:/usr/local/bin:/usr/local/opt/gettext/bin:$PATH"
+
+# Better history
+# Credits to https://coderwall.com/p/jpj_6q/zsh-better-history-searching-with-arrow-keys
+# autoload -U up-line-or-beginning-search
+# autoload -U down-line-or-beginning-search
+# zle -N up-line-or-beginning-search
+# zle -N down-line-or-beginning-search
+# bindkey "^[[A" up-line-or-beginning-search # Up
+# bindkey "^[[B" down-line-or-beginning-search # Down
+
+# zsh-autosuggestions https://github.com/zsh-users/zsh-autosuggestions/blob/master/INSTALL.md
+plugins=(osx node npm tmux history-substring-search zsh-autosuggestions)
 
 [ -f $ZSH/oh-my-zsh.sh ] && source $ZSH/oh-my-zsh.sh
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -52,18 +62,6 @@ bindkey '^[[5D' beginning-of-line
 bindkey '^[[5C' end-of-line
 bindkey '^[[3~' delete-char
 bindkey '^?' backward-delete-char
-
-# Better history
-# Credits to https://coderwall.com/p/jpj_6q/zsh-better-history-searching-with-arrow-keys
-# autoload -U up-line-or-beginning-search
-# autoload -U down-line-or-beginning-search
-# zle -N up-line-or-beginning-search
-# zle -N down-line-or-beginning-search
-# bindkey "^[[A" up-line-or-beginning-search # Up
-# bindkey "^[[B" down-line-or-beginning-search # Down
-
-# zsh-autosuggestions https://github.com/zsh-users/zsh-autosuggestions/blob/master/INSTALL.md
-plugins=(osx node npm tmux history-substring-search zsh-autosuggestions)
 
 
 if $(gls &>/dev/null)
@@ -158,3 +156,6 @@ if [ -f '/Users/billy/Downloads/google-cloud-sdk 2/path.zsh.inc' ]; then . '/Use
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/billy/Downloads/google-cloud-sdk 2/completion.zsh.inc' ]; then . '/Users/billy/Downloads/google-cloud-sdk 2/completion.zsh.inc'; fi
+
+eval "$(starship init zsh)"
+
