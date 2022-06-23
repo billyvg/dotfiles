@@ -141,3 +141,5 @@
 	; rebase = true
 [init]
 	defaultBranch = main
+[user]
+	name = billyvg@users.noreply.github.com
