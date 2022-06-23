@@ -208,8 +208,8 @@ require('packer').startup({ function(use)
       config = function()
         local servers = { "bashls", "cmake", "cssls", "codeqlls", "dockerls", "eslint", "html", "jsonls", "tsserver", "sumneko_lua", "remark_ls", "pyright", "sqlls", "stylelint_lsp", "vimls", "yamlls" }
         require("nvim-lsp-installer").setup {
-          ensure_installed = servers,
-          automatic_installation = false,
+          ensure_installed = {},
+          automatic_installation = true,
         }
 
         -- from https://github.com/neovim/nvim-lspconfig
