@@ -98,7 +98,42 @@ require('packer').startup({ function(use)
   -- }}}
 
   -- {{{ Plugin: treesitter
-  use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }
+  use {
+    'nvim-treesitter/nvim-treesitter',
+    run = ':TSUpdate',
+    config = function()
+      require('nvim-treesitter.configs').setup({
+        ensure_installed = {
+          'dockerfile',
+          'html',
+          'json',
+          'python',
+          'yaml',
+          'comment',
+          'jsdoc',
+          'javascript',
+          'graphql',
+          'regex',
+          'scss',
+          'lua',
+          'typescript',
+          'tsx',
+          'bash',
+          'cmake',
+          'css',
+        },
+        highlight = {
+          enable = true,
+        },
+        indent = {
+          enable = true,
+        },
+        autotag = {
+          enable = true,
+        },
+      })
+    end
+  }
 
   -- Tree sitter Playground
   -- https://github.com/nvim-treesitter/playground
@@ -854,39 +889,6 @@ map('t', '<C-j>', '<C-\\><C-n><C-w><C-j>')
 
 -- }}}
 
-require('colorizer').setup()
-
--- {{{ Treesitter configuration
-require('nvim-treesitter.configs').setup({
-  ensure_installed = {
-    'dockerfile',
-    'html',
-    'json',
-    'python',
-    'yaml',
-    'comment',
-    'jsdoc',
-    'javascript',
-    'graphql',
-    'regex',
-    'scss',
-    'lua',
-    'typescript',
-    'tsx',
-    'bash',
-    'cmake',
-    'css',
-  },
-  highlight = {
-    enable = true,
-  },
-  indent = {
-    enable = true,
-  },
-  autotag = {
-    enable = true,
-  },
-})
 -- }}}
 
 -- {{{ NerdCommenter
