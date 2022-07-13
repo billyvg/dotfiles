@@ -41,12 +41,6 @@ else
   (( $+commands[brew] )) && $(brew --prefix)/opt/fzf/install
 fi
 
-# Load plugins.
-eval "$(scmpuff init -s)"
-
-# thefuck
-eval $(thefuck --alias)
-
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
@@ -142,4 +136,10 @@ if [ -f '/Users/billy/Downloads/google-cloud-sdk 2/path.zsh.inc' ]; then . '/Use
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/billy/Downloads/google-cloud-sdk 2/completion.zsh.inc' ]; then . '/Users/billy/Downloads/google-cloud-sdk 2/completion.zsh.inc'; fi
+
+# Load plugins.
+eval "$(scmpuff init -s)"
+
+# thefuck
+eval $(thefuck --alias)
 
