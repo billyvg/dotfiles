@@ -72,6 +72,9 @@ bindkey '^[[3~' delete-char
 bindkey '^?' backward-delete-char
 bindkey '^u' backward-kill-line
 
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
+
 autoload -U edit-command-line
 zle -N edit-command-line
 bindkey '^x^e' edit-command-line
