@@ -502,7 +502,15 @@ require('packer').startup({ function(use)
   }
   -- }}}
 
-  use 'tpope/vim-surround'
+  -- use 'tpope/vim-surround'
+  use({
+    "kylechui/nvim-surround",
+    config = function()
+        require("nvim-surround").setup({
+            -- Configuration here, or leave empty to use defaults
+        })
+    end
+  })
 
   -- renames current file
   -- :Rename[!] {newname}
