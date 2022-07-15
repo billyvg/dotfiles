@@ -579,8 +579,18 @@ require('packer').startup({ function(use)
     end
   }
 
-  -- use 'rhysd/conflict-marker.vim'
-  -- use 'tyru/open-browser-github.vim' -- for opening in github
+  use {
+    'akinsho/git-conflict.nvim',
+    config = function()
+      require('git-conflict').setup()
+      vim.keymap.set('n', '\1', '<Plug>(git-conflict-ours)')
+      vim.keymap.set('n', '\2', '<Plug>(git-conflict-theirs)')
+      vim.keymap.set('n', '\b', '<Plug>(git-conflict-both)')
+      vim.keymap.set('n', '\n', '<Plug>(git-conflict-none)')
+      vim.keymap.set('n', ']x', '<Plug>(git-conflict-prev-conflict)')
+      vim.keymap.set('n', '[x', '<Plug>(git-conflict-next-conflict)')
+    end
+  }
   -- }}}
 
   -- {{{ Plugins: Formatting / whitespace
@@ -868,7 +878,7 @@ map('n', '<leader>-', ':split<CR>')
 map('n', '<leader>c', ':Gvdiff<CR>')
 map('n', '<leader><', ':diffget //2<CR>:diffupdate<CR>]c<CR>')
 map('n', '<leader>>', ':diffget //3<CR>:diffupdate<CR>]c<CR>')
-map('n', '<leader>fc', '<ESC>/\\v^[<=>]{7}( .*\\|$)<CR>', { silent = true })
+-- map('n', '<leader>fc', '<ESC>/^[<=>]\{7\}\( .*\\|\$\)<CR>', { silent = true })
 
 -- map('n', '<leader>1', ':source ~/.nvimdev.vim<CR>')
 -- map('n', '<leader>ur', ':UpdateRemotePlugins<CR>:qall!<CR>')
