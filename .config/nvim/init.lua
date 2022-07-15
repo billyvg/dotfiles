@@ -866,7 +866,7 @@ cmd 'hi CursorLine ctermbg=186'
 -- map('n', 'gp', ':ALEFix<CR>')
 -- map('n', '<leader>es', ':execute ":split " . g:neosnippet#snippets_directory')
 
-map('c', '<C-P>', 'getcmdline()[getcmdpos()-2] ==# " " ? expand("%:p:h") : "\\<C-P>"', { expr = true }) -- insert current dir path in command line
+map('c', '<C-p>', 'getcmdline()[getcmdpos()-2] ==# " " ? expand("%:p:h") : "\\<C-p>"', { expr = true }) -- insert current dir path in command line
 map('n', '<leader>ev', ':split $MYVIMRC<CR>')
 map('n', '<leader>sv', ':source $MYVIMRC<CR>:PackerCompile<CR>')
 map('n', '<leader>m', ':messages<CR>')
