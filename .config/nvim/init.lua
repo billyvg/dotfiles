@@ -255,6 +255,20 @@ require('packer').startup({ function(use)
         vim.api.nvim_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
         vim.api.nvim_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
 
+        -- if you want to set up formatting on save, you can use this as a callback
+        local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
+
+        local lsp_formatting = function(bufnr)
+          vim.lsp.buf.format({
+              timeout_ms = 5000,
+              filter = function(client)
+                  -- apply whatever logic you want (in this example, we'll only use null-ls)
+                  return client.name == "null-ls"
+              end,
+              bufnr = bufnr,
+          })
+        end
+
         -- Use an on_attach function to only map the following keys
         -- after the language server attaches to the current buffer
         local on_attach = function(client, bufnr)
@@ -275,7 +289,18 @@ require('packer').startup({ function(use)
           vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
           vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
           vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-          -- vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+          -- vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.format()<CR>', opts)
+
+          if client.supports_method("textDocument/formatting") then
+            vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
+            vim.api.nvim_create_autocmd("BufWritePre", {
+                group = augroup,
+                buffer = bufnr,
+                callback = function()
+                    lsp_formatting(bufnr)
+                end,
+            })
+          end
         end
 
         local lspconfig = require("lspconfig")
@@ -304,8 +329,6 @@ require('packer').startup({ function(use)
 
         lspconfig.tsserver.setup {
           on_attach = function(client, bufnr)
-            client.server_capabilities.document_formatting = false
-            client.server_capabilities.document_range_formatting = false
             -- local ts_utils = require("nvim-lsp-ts-utils")
             -- ts_utils.setup({})
             -- ts_utils.setup_client(client)
@@ -316,16 +339,11 @@ require('packer').startup({ function(use)
           end,
         }
 
-        -- Use a loop to conveniently call 'setup' on multiple servers and
         -- map buffer local keybindings when the language server attaches
         -- for _, lsp in pairs(servers) do
-        -- lspconfig[lsp].setup {
-        -- on_attach = on_attach,
-        -- flags = {
-        -- -- This will be the default in neovim 0.7+
-        -- debounce_text_changes = 150,
-        -- }
-        -- }
+          -- lspconfig[lsp].setup {
+            -- on_attach = on_attach,
+          -- }
         -- end
       end
     }
@@ -522,51 +540,22 @@ require('packer').startup({ function(use)
   -- }}}
 
 
-  -- {{{ Plugin: ALE
-  use {
-    'dense-analysis/ale',
+  -- {{{ Plugin: null-ls
+  use({
+    "jose-elias-alvarez/null-ls.nvim",
     config = function()
-      -- vim.g.ale_javascript_prettier_use_local_config = 1
-      -- vim.g.ale_linter_aliases = {'jsx': ['css', 'javascript']}
-      vim.g.ale_linters = {
-        jsx = { 'stylelint', 'eslint' },
-        lua = { 'luafmt' },
-        javascript = { 'eslint' },
-        ['javascript.jsx'] = { 'eslint' },
-        typescript = { 'eslint' },
-        ['typescript.tsx'] = { 'eslint' },
-        ['typescriptreact'] = { 'eslint' },
-      }
-      -- g.ale_javascript_eslint_use_global = 0 -- this works more reliably
-      vim.g.ale_fixers = {
-        json = "prettier",
-        javascript = "eslint",
-        ["javascript.jsx"] = { "eslint", "stylelint" },
-        typescript = "eslint",
-        ["typescript.tsx"] = { "eslint", "stylelint" },
-        ["typescriptreact"] = { "eslint" },
-        less = "prettier",
-        -- python = "black",
-      }
-      -- vim.g.ale_fixers['json'] = ['prettier']
-      -- vim.g.ale_fixers['javascript'] = ['eslint']
-      -- vim.g.ale_fixers['javascript.jsx'] = ['eslint', 'stylelint']
-      -- vim.g.ale_fixers['typescript'] = ['eslint', 'prettier']
-      -- vim.g.ale_fixers['typescript.tsx'] = ['eslint']
-      -- vim.g.ale_fixers['less'] = ['prettier']
-      -- vim.g.ale_fixers['python'] = ['autopep8']
-      vim.g.ale_fix_on_save = 1
-      vim.g.ale_echo_msg_error_str = 'E'
-      vim.g.ale_echo_msg_warning_str = 'W'
-      vim.g.ale_echo_msg_format = '[%linter%] %s (%code%)'
-      vim.g.ale_lint_delay = 200
-      vim.g.ale_virtualtext_cursor = 1
-      vim.g.ale_linters_explicit = 1
-      -- vim.api.nvim_set_keymap('n', '<C-[>', '<Plug>(ale_previous_wrap)', { silent = true, noremap = true })
-      -- vim.api.nvim_set_keymap('n', '<C-]>', '<Plug>(ale_next_wrap)', { silent = true, noremap = true })
-    end
-  }
-  --- }}}
+      require("null-ls").setup({
+        sources = {
+          require("null-ls").builtins.formatting.stylua,
+          require("null-ls").builtins.diagnostics.eslint,
+          require("null-ls").builtins.formatting.eslint,
+          require("null-ls").builtins.diagnostics.stylelint,
+        }
+      })
+    end,
+    requires = { "nvim-lua/plenary.nvim" },
+  })
+  -- }}}
 
   -- {{{ Plugins: git
   use {
@@ -860,7 +849,7 @@ cmd 'hi CursorLine ctermbg=186'
 -- map('i', '<cr>', 'pumvisible() ? "\\<C-y>" : "\\<C-g>u\\<CR>"', {expr = true}) -- enter to confirm delete
 
 
-map('n', 'gp', ':ALEFix<CR>')
+-- map('n', 'gp', ':ALEFix<CR>')
 -- map('n', '<leader>es', ':execute ":split " . g:neosnippet#snippets_directory')
 
 map('c', '<C-P>', 'getcmdline()[getcmdpos()-2] ==# " " ? expand("%:p:h") : "\\<C-P>"', { expr = true }) -- insert current dir path in command line
