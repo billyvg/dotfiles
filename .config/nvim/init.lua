@@ -530,6 +530,10 @@ require('packer').startup({ function(use)
     end
   })
 
+  -- Better Quick Fix
+  use {'kevinhwang91/nvim-bqf', ft = 'qf'}
+
+
   -- renames current file
   -- :Rename[!] {newname}
   use 'danro/rename.vim'
