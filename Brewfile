@@ -8,7 +8,7 @@ tap "neovim/neovim" || true
 brew "fzf"
 brew "ripgrep"
 brew "git"
-brew "neovim"
+brew "neovim", args: ['HEAD']
 brew "reattach-to-user-namespace"
 brew "scmpuff"
 brew "thefuck"
@@ -32,6 +32,7 @@ cask "google-chrome"
 cask "slack"
 # cask "docker"
 cask "chromedriver"
+cask "visual-studio-code"
 
 ### Mac App Store ###
 brew "mas"
