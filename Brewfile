@@ -7,6 +7,9 @@ tap "neovim/neovim" || true
 
 brew "fzf"
 brew "ripgrep"
+brew "fd"
+brew "bat"
+brew "viu"
 brew "git"
 brew "neovim", args: ['HEAD']
 brew "reattach-to-user-namespace"
@@ -17,7 +20,8 @@ brew "watchman"
 brew "wget"
 brew "volta"
 brew "gh"
-brew "git-delta" # for git diffing
+brew "git-delta"                      # for git diffing
+brew "stylua"                         # lua formatting
 
 # Casks
 # cask "alacritty"
