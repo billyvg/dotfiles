@@ -11,50 +11,67 @@ require("packer").startup({
 		-- Packer can manage itself
 		use("wbthomason/packer.nvim")
 
-		-- {{{ Plugin: fzf
+		-- {{{ Plugin: fuzzy finder
 		use({
-			"junegunn/fzf",
-			run = function()
-				vim.fn["fzf#install"]()
-			end,
-		})
-		use({
-			"junegunn/fzf.vim",
-			setup = function()
-				vim.keymap.set("n", "<C-p>", ":FZF<CR>")
-				vim.keymap.set("n", "<leader>f", ":RG<CR>")
-			end,
+			"nvim-telescope/telescope.nvim",
+			requires = {
+				{ "nvim-lua/popup.nvim" },
+				{ "nvim-lua/plenary.nvim" },
+				{ "nvim-telescope/telescope-fzf-native.nvim", run = "make" },
+			},
 			config = function()
-				vim.api.nvim_exec(
-					[[
-        function! RipgrepFzf2(query, fullscreen)
-          let command_fmt = 'rg --hidden --column --line-number --no-heading --follow --color=always --smart-case -- %s || true'
-          let initial_command = printf(command_fmt, shellescape(a:query))
-          let spec = {'options': ['--query', a:query]}
-          call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
-        endfunction
+				vim.keymap.set("n", "<C-p>", ":Telescope find_files<CR>")
+				vim.keymap.set("n", "<leader>fg", ":Telescope live_grep<CR>")
+				vim.keymap.set("n", "<leader>ff", function()
+					require("telescope.builtin").grep_string({
+						shorten_path = true,
+						word_match = "-w",
+						only_sort_text = true,
+						search = "",
+					})
+				end)
 
-        command! -nargs=* -bang RG call RipgrepFzf2(<q-args>, <bang>0)
-      ]],
-					false
-				)
-
-				-- vim.api.nvim_command('command! -nargs=* -bang RG call g:RipgrepFzf(<q-args>, <bang>0)')
+				local telescope = require("telescope")
+				local actions = require("telescope.actions")
+				require("telescope").setup({})
+				telescope.setup({
+					defaults = {
+						mappings = {
+							i = {
+								["<esc>"] = actions.close, -- close telescope while in esxape mode
+								["<C-u>"] = false, -- ctrl-u to clear line
+							},
+						},
+						vimgrep_arguments = {
+							"rg",
+							"--color=never",
+							"--no-heading",
+							"--with-filename",
+							"--line-number",
+							"--column",
+							"--smart-case",
+							"--trim", -- trims indentations in result window
+						},
+					},
+					pickers = {
+						find_files = {
+							find_command = { "fd", "--type", "f", "--strip-cwd-prefix" }, -- remove ./ from file prefixes
+						},
+					},
+					-- extensions = {
+					-- 	fzf = {
+					-- 		fuzzy = true, -- false will only do exact matching
+					-- 		override_generic_sorter = true, -- override the generic sorter
+					-- 		override_file_sorter = true, -- override the file sorter
+					-- 		case_mode = "smart_case", -- or "ignore_case" or "respect_case"
+					-- 		-- the default case_mode is "smart_case"
+					-- 	},
+					-- },
+				})
+				telescope.load_extension("fzf")
 			end,
 		})
-		-- use {
-		-- 'nvim-telescope/telescope.nvim',
-		-- requires = {
-		-- {'nvim-lua/popup.nvim'},
-		-- {'nvim-lua/plenary.nvim'},
-		-- {'nvim-telescope/telescope-fzf-native.nvim', run = 'make'}
-		-- },
-		-- config = function ()
-		-- vim.keymap.set('n', '<C-p>', ':Telescope find_files<CR>')
-		-- vim.keymap.set('n', '<leader>ff', ':Telescope live_grep<CR>')
-		-- require('telescope').load_extension('fzf')
-		-- end
-		-- }
+
 		-- use {
 		-- 'camspiers/snap', rocks = {'fzy'},
 		-- config = function()
@@ -387,18 +404,6 @@ require("packer").startup({
 			"onsails/lspkind-nvim",
 			-- setup in cmp plugin
 		})
-
-		-- This plugin makes the Neovim LSP client use FZF to display results and navigate the code.
-		use({
-			"ojroques/nvim-lspfuzzy",
-			requires = {
-				{ "junegunn/fzf" },
-				{ "junegunn/fzf.vim" }, -- to enable preview (optional)
-			},
-			config = function()
-				require("lspfuzzy").setup({})
-			end,
-		})
 		-- }}}
 
 		-- {{{ Plugin: Commenter
@@ -555,6 +560,9 @@ require("packer").startup({
 							transparent_panel = false, -- make the panel transparent
 						},
 						lsp_trouble = true,
+						dashboard = false,
+						bufferline = false,
+						telekasten = false,
 					},
 				})
 				vim.g.catppuccin_flavour = "macchiato" -- latte, frappe, macchiato, mocha
@@ -748,16 +756,7 @@ vim.keymap.set("t", "<C-j>", "<C-\\><C-n><C-w><C-j>")
 -- }}}
 -- }}}
 
--- Some FZF Configuration
 vim.opt.grepprg = "rg --vimgrep"
-vim.env["FZF_DEFAULT_COMMAND"] = "rg --color=never --files --follow --hidden -g '!.git/*'"
-vim.env["FZF_DEFAULT_OPTS"] = "--layout=reverse"
-
-local fzf_group = vim.api.nvim_create_augroup("fzf_setup", { clear = true })
-vim.api.nvim_create_autocmd(
-	"TermOpen",
-	{ pattern = "term://*FZF", command = "tnoremap <silent> <buffer><nowait> <esc> <c-c>", group = fzf_group }
-)
 
 local vimrc_group = vim.api.nvim_create_augroup("vimrc", { clear = true })
 vim.api.nvim_create_autocmd(
