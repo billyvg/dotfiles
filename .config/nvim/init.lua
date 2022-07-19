@@ -567,6 +567,16 @@ require("packer").startup({
 				})
 				vim.g.catppuccin_flavour = "macchiato" -- latte, frappe, macchiato, mocha
 				vim.cmd([[colorscheme catppuccin]])
+
+				-- Toggle colorschemes
+				vim.keymap.set("n", "<leader>dm", function()
+					if vim.g.catppuccin_flavour == "macchiato" then
+						vim.g.catppuccin_flavour = "latte"
+					else
+						vim.g.catppuccin_flavour = "macchiato"
+					end
+					vim.cmd([[colorscheme catppuccin]])
+				end)
 			end,
 		})
 
