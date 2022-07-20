@@ -504,8 +504,13 @@ require("packer").startup({
 			"catppuccin/nvim",
 			as = "catppuccin",
 			requires = { "kyazdani42/nvim-web-devicons" },
+			run = ":CatppuccinCompile",
 			config = function()
 				require("catppuccin").setup({
+					compile = {
+						enabled = true,
+						path = vim.fn.stdpath("cache") .. "/catppuccin",
+					},
 					integration = {
 						nvimtree = {
 							enabled = true,
@@ -521,15 +526,12 @@ require("packer").startup({
 				vim.g.catppuccin_flavour = "macchiato" -- latte, frappe, macchiato, mocha
 				vim.cmd([[colorscheme catppuccin]])
 
-				-- Toggle colorschemes
-				vim.keymap.set("n", "<leader>dm", function()
-					if vim.g.catppuccin_flavour == "macchiato" then
-						vim.g.catppuccin_flavour = "latte"
-					else
-						vim.g.catppuccin_flavour = "macchiato"
-					end
-					vim.cmd([[colorscheme catppuccin]])
-				end)
+				vim.api.nvim_create_autocmd("OptionSet", {
+					pattern = "background",
+					callback = function()
+						vim.cmd("Catppuccin " .. (vim.v.option_new == "light" and "latte" or "mocha"))
+					end,
+				})
 			end,
 		})
 
@@ -609,7 +611,7 @@ require("packer").startup({
 			"feline-nvim/feline.nvim",
 			config = function()
 				require("feline").setup({
-					components = require("catppuccin.core.integrations.feline"),
+					components = require("catppuccin.groups.integrations.feline").get(),
 				})
 			end,
 		})
@@ -696,6 +698,11 @@ vim.keymap.set("n", "Q", "<nop>") -- no EX mode accidents
 
 vim.keymap.set("n", "<leader>\\", ":vsplit<CR>")
 vim.keymap.set("n", "<leader>-", ":split<CR>")
+
+-- Toggle colorschemes
+vim.keymap.set("n", "<leader>dm", function()
+	vim.opt.background = vim.opt.background:get() == "light" and "dark" or "light"
+end)
 
 -- vim.keymap.set("n", "<leader>c", ":Gvdiff<CR>")
 -- vim.keymap.set("n", "<leader><", ":diffget //2<CR>:diffupdate<CR>]c<CR>")
