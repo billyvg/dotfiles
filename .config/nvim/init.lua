@@ -13,88 +13,27 @@ require("packer").startup({
 
 		-- {{{ Plugin: fuzzy finder
 		use({
-			"nvim-telescope/telescope.nvim",
-			requires = {
-				{ "nvim-lua/popup.nvim" },
-				{ "nvim-lua/plenary.nvim" },
-				{ "nvim-telescope/telescope-fzf-native.nvim", run = "make" },
-			},
-			config = function()
-				vim.keymap.set("n", "<C-p>", ":Telescope find_files<CR>")
-				vim.keymap.set("n", "<leader>fg", ":Telescope live_grep<CR>")
-				vim.keymap.set("n", "<leader>ff", function()
-					require("telescope.builtin").grep_string({
-						shorten_path = true,
-						word_match = "-w",
-						only_sort_text = true,
-						search = "",
-					})
-				end)
-
-				local telescope = require("telescope")
-				local actions = require("telescope.actions")
-				require("telescope").setup({})
-				telescope.setup({
-					defaults = {
-						mappings = {
-							i = {
-								["<esc>"] = actions.close, -- close telescope while in esxape mode
-								["<C-u>"] = false, -- ctrl-u to clear line
-							},
-						},
-						vimgrep_arguments = {
-							"rg",
-							"--color=never",
-							"--no-heading",
-							"--with-filename",
-							"--line-number",
-							"--column",
-							"--smart-case",
-							"--trim", -- trims indentations in result window
-						},
-					},
-					pickers = {
-						find_files = {
-							find_command = { "fd", "--type", "f", "--strip-cwd-prefix" }, -- remove ./ from file prefixes
-						},
-					},
-					-- extensions = {
-					-- 	fzf = {
-					-- 		fuzzy = true, -- false will only do exact matching
-					-- 		override_generic_sorter = true, -- override the generic sorter
-					-- 		override_file_sorter = true, -- override the file sorter
-					-- 		case_mode = "smart_case", -- or "ignore_case" or "respect_case"
-					-- 		-- the default case_mode is "smart_case"
-					-- 	},
-					-- },
-				})
-				telescope.load_extension("fzf")
-			end,
+			"junegunn/fzf",
+			run = "./install --bin",
+			-- run = function()
+			-- 	vim.fn["fzf#install"]()
+			-- end,
 		})
 
-		-- use {
-		-- 'camspiers/snap', rocks = {'fzy'},
-		-- config = function()
-		-- local snap = require'snap'
-		-- snap.register.map({"n"}, {"<C-p>"}, function ()
-		-- snap.run {
-		-- producer = snap.get'consumer.fzy'(snap.get'producer.ripgrep.file'),
-		-- select = snap.get'select.file'.select,
-		-- multiselect = snap.get'select.file'.multiselect,
-		-- views = {snap.get'preview.file'}
-		-- }
-		-- end)
-		-- snap.register.map({"n"}, {"<Leader>f"}, function ()
-		-- snap.run {
-		-- producer = snap.get'producer.ripgrep.vimgrep',
-		-- select = snap.get'select.vimgrep'.select,
-		-- multiselect = snap.get'select.vimgrep'.multiselect,
-		-- views = {snap.get'preview.vimgrep'}
-		-- }
-		-- end)
-		-- end
-		-- }
-
+		use({
+			"ibhagwan/fzf-lua",
+			-- optional for icon support
+			requires = { "kyazdani42/nvim-web-devicons" },
+			config = function()
+				vim.keymap.set("n", "<C-p>", "<cmd>lua require('fzf-lua').files()<CR>", { silent = true })
+				vim.keymap.set(
+					"n",
+					"<leader>ff",
+					"<cmd>lua require('fzf-lua').live_grep_native()<CR>",
+					{ silent = true }
+				)
+			end,
+		})
 		-- }}}
 
 		-- {{{ Plugin: linter
