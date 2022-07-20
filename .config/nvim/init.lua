@@ -237,20 +237,6 @@ require("packer").startup({
 					vim.keymap.set("n", "]d", "<cmd>lua vim.diagnostic.goto_next()<CR>", opts)
 					vim.keymap.set("n", "<space>q", "<cmd>lua vim.diagnostic.setloclist()<CR>", opts)
 
-					-- if you want to set up formatting on save, you can use this as a callback
-					local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
-
-					local lsp_formatting = function(bufnr)
-						vim.lsp.buf.format({
-							timeout_ms = 5000,
-							filter = function(client)
-								-- apply whatever logic you want (in this example, we'll only use null-ls)
-								return client.name == "null-ls"
-							end,
-							bufnr = bufnr,
-						})
-					end
-
 					-- Use an on_attach function to only map the following keys
 					-- after the language server attaches to the current buffer
 					local on_attach = function(client, bufnr)
@@ -276,17 +262,6 @@ require("packer").startup({
 						vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, buf_opts)
 						vim.keymap.set("n", "<leader>a", vim.lsp.buf.code_action, buf_opts)
 						vim.keymap.set("n", "<leader>fmt", vim.lsp.buf.format, buf_opts)
-
-						if client.supports_method("textDocument/formatting") then
-							vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
-							vim.api.nvim_create_autocmd("BufWritePre", {
-								group = augroup,
-								buffer = bufnr,
-								callback = function()
-									lsp_formatting(bufnr)
-								end,
-							})
-						end
 					end
 
 					local lspconfig = require("lspconfig")
@@ -403,20 +378,59 @@ require("packer").startup({
 		use("tmux-plugins/vim-tmux") -- for editing .tmux.conf
 		-- }}}
 
-		-- {{{ Plugin: null-ls
+		-- {{{ Plugin: format on save
 		use({
-			"jose-elias-alvarez/null-ls.nvim",
+			"mhartington/formatter.nvim",
 			config = function()
-				require("null-ls").setup({
-					sources = {
-						require("null-ls").builtins.formatting.stylua,
-						require("null-ls").builtins.diagnostics.eslint,
-						require("null-ls").builtins.formatting.eslint,
-						require("null-ls").builtins.diagnostics.stylelint,
+				-- Utilities for creating configurations
+				local util = require("formatter.util")
+
+				-- Provides the Format and FormatWrite commands
+				require("formatter").setup({
+					-- Enable or disable logging
+					logging = true,
+					-- Set the log level
+					log_level = vim.log.levels.WARN,
+					-- All formatter configurations are opt-in
+					filetype = {
+						-- Formatter configurations for filetype "lua" go here
+						-- and will be executed in order
+						lua = {
+							-- "formatter.filetypes.lua" defines default configurations for the
+							-- "lua" filetype
+							require("formatter.filetypes.lua").stylua,
+						},
+
+						-- Note we need to install eslint_d separately
+						-- npm install -g eslint_d
+						javascript = {
+							require("formatter.filetypes.javascript").eslint_d,
+						},
+						javascriptreact = {
+							require("formatter.filetypes.javascriptreact").eslint_d,
+						},
+						typescript = {
+							require("formatter.filetypes.typescript").eslint_d,
+						},
+						typescriptreact = {
+							require("formatter.filetypes.typescriptreact").eslint_d,
+						},
 					},
 				})
+
+				-- if you want to set up formatting on save, you can use this as a callback
+				local augroup = vim.api.nvim_create_augroup("Formatter", {})
+				vim.api.nvim_create_autocmd("BufWritePost", {
+					group = augroup,
+					callback = function()
+						vim.cmd([[Format]])
+					end,
+					-- buffer = bufnr,
+					-- callback = function()
+					-- 	lsp_formatting(bufnr)
+					-- end,
+				})
 			end,
-			requires = { "nvim-lua/plenary.nvim" },
 		})
 		-- }}}
 
