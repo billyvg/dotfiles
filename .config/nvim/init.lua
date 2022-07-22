@@ -38,20 +38,6 @@ require("packer").startup({
 		})
 		-- }}}
 
-		-- {{{ Plugin: linter
-		-- use {
-		-- 'mfussenegger/nvim-lint',
-		-- config = function()
-		-- require('lint').linters_by_ft = {
-		-- typescript = {'eslint',},
-		-- javascript = {'eslint',},
-		-- ["typescript.jsx"] = {'eslint',},
-		-- ["javascript.jsx"] = {'eslint',},
-		-- }
-		-- end
-		-- }
-		-- }}}
-
 		-- {{{ Plugins: treesitter
 		use({
 			"nvim-treesitter/nvim-treesitter",
