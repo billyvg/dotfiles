@@ -205,7 +205,6 @@ require("packer").startup({
 						"jsonls",
 						"tsserver",
 						"sumneko_lua",
-						"remark_ls",
 						"pyright",
 						"sqlls",
 						"stylelint_lsp",
