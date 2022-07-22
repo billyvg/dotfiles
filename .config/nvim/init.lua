@@ -25,13 +25,15 @@ require("packer").startup({
 			-- optional for icon support
 			requires = { "kyazdani42/nvim-web-devicons" },
 			config = function()
-				vim.keymap.set("n", "<C-p>", "<cmd>lua require('fzf-lua').files()<CR>", { silent = true })
-				vim.keymap.set(
-					"n",
-					"<leader>ff",
-					"<cmd>lua require('fzf-lua').live_grep_native()<CR>",
-					{ silent = true }
-				)
+				-- We can use our new function on any folder or
+				-- with any other fzf-lua options ('winopts', etc)
+				vim.keymap.set("n", "<C-p>", function()
+					require("fzf-lua").files()
+				end, { silent = true })
+
+				vim.keymap.set("n", "<leader>ff", function()
+					require("fzf-lua").grep_project()
+				end, { silent = true })
 			end,
 		})
 		-- }}}
