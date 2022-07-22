@@ -129,7 +129,8 @@ export NODE_OPTIONS=--max_old_space_size=8192
 export VOLTA_HOME="$HOME/.volta"
 export PATH="$VOLTA_HOME/bin:$PATH"
 export MANPAGER='nvim +Man!'
-export BAT_THEME='Monokai Extended'
+# export BAT_THEME='Monokai Extended'
+export BAT_THEME='Catppuccin'
 export PATH="$PATH:/Users/billy/.bin"
 
 [ -f ~/.sentryrc ] && source ~/.sentryrc
@@ -146,3 +147,8 @@ eval "$(scmpuff init -s)"
 # thefuck
 eval $(thefuck --alias)
 
+
+export FZF_DEFAULT_OPTS=" \
+--color=bg+:#363a4f,bg:#24273a,spinner:#f4dbd6,hl:#ed8796 \
+--color=fg:#cad3f5,header:#ed8796,info:#c6a0f6,pointer:#f4dbd6 \
+--color=marker:#f4dbd6,fg+:#cad3f5,prompt:#c6a0f6,hl+:#ed8796"
