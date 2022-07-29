@@ -340,7 +340,7 @@ require("packer").startup({
 		use({
 			"folke/trouble.nvim",
 			requires = "kyazdani42/nvim-web-devicons",
-			cmd = { "Trouble" },
+			cmd = { "Trouble", "TroubleToggle" },
 			setup = function()
 				vim.keymap.set("n", "<leader>xx", "<cmd>TroubleToggle<cr>", { silent = true })
 				-- vim.keymap.set("n", "<leader>xw", "<cmd>Trouble workspace_diagnostics<cr>", { silent = true })
@@ -453,7 +453,6 @@ require("packer").startup({
 		-- }}}
 
 		-- {{{ Plugins: Formatting / whitespace
-		use("bronson/vim-trailing-whitespace")
 		use({
 			"lukas-reineke/indent-blankline.nvim",
 			config = function()
@@ -657,7 +656,7 @@ vim.opt.foldmethod = "marker"
 
 -- {{{ Conceal markers
 if vim.fn.has("conceal") then
-	vim.opt.conceallevel = 2
+	vim.opt.conceallevel = 0
 	vim.opt.concealcursor = "niv"
 end
 -- }}}
