@@ -135,12 +135,6 @@ export PATH="$PATH:/Users/billy/.bin"
 
 [ -f ~/.sentryrc ] && source ~/.sentryrc
 
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/billy/Downloads/google-cloud-sdk 2/path.zsh.inc' ]; then . '/Users/billy/Downloads/google-cloud-sdk 2/path.zsh.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/Users/billy/Downloads/google-cloud-sdk 2/completion.zsh.inc' ]; then . '/Users/billy/Downloads/google-cloud-sdk 2/completion.zsh.inc'; fi
-
 # Load plugins.
 eval "$(scmpuff init -s)"
 
@@ -152,3 +146,10 @@ export FZF_DEFAULT_OPTS=" \
 --color=bg+:#363a4f,bg:#24273a,spinner:#f4dbd6,hl:#ed8796 \
 --color=fg:#cad3f5,header:#ed8796,info:#c6a0f6,pointer:#f4dbd6 \
 --color=marker:#f4dbd6,fg+:#cad3f5,prompt:#c6a0f6,hl+:#ed8796"
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/billy/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/billy/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/billy/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/billy/google-cloud-sdk/completion.zsh.inc'; fi
+export PATH="/Users/billy/code/sentry:$PATH"
