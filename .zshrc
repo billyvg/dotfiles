@@ -22,7 +22,7 @@ HISTFILE=~/.zsh_history
 HISTSIZE=10000
 SAVEHIST=10000
 
-export PATH="$HOME/.cargo/bin:/usr/local/bin:/usr/local/opt/gettext/bin:$PATH"
+export PATH="$HOME/.cargo/bin:/usr/local/opt/gettext/bin:$PATH:/usr/local/bin"
 export LSCOLORS="exfxcxdxbxegedabagacad"
 export CLICOLOR=true
 
@@ -86,8 +86,8 @@ export NODE_REPL_HISTORY_FILE=~/.node_repl
 # ALIASES
 alias reload!='. ~/.zshrc'
 alias zshconfig="nvim ~/.zshrc"
-alias pr="gh pr create --fill && gh pr view --web"
-alias prd="git push && gh pr create --fill --draft && gh pr view --web"
+alias pr="gh pr create --fill-first && gh pr view --web"
+alias prd="git push && gh pr create --fill-first --draft && gh pr view --web"
 alias vim=nvim
 alias vimconfig="nvim ~/.config/nvim/init.vim"
 alias config='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
