@@ -39,46 +39,46 @@ require("packer").startup({
 		-- }}}
 
 		-- {{{ Plugins: treesitter
-		use({
-			"nvim-treesitter/nvim-treesitter",
-			run = ":TSUpdate",
-			config = function()
-				require("nvim-treesitter.configs").setup({
-					ensure_installed = {
-						"dockerfile",
-						"html",
-						"json",
-						"python",
-						"yaml",
-						"comment",
-						"jsdoc",
-						"javascript",
-						"graphql",
-						"regex",
-						"scss",
-						"lua",
-						"typescript",
-						"tsx",
-						"bash",
-						"cmake",
-						"css",
-					},
-					highlight = {
-						enable = true,
-					},
-					indent = {
-						enable = true,
-					},
-					autotag = {
-						enable = true,
-					},
-				})
-			end,
-		})
+		-- use({
+		-- 	"nvim-treesitter/nvim-treesitter",
+		-- 	run = ":TSUpdate",
+		-- 	config = function()
+		-- 		require("nvim-treesitter.configs").setup({
+		-- 			ensure_installed = {
+		-- 				"dockerfile",
+		-- 				"html",
+		-- 				"json",
+		-- 				"python",
+		-- 				"yaml",
+		-- 				"comment",
+		-- 				"jsdoc",
+		-- 				"javascript",
+		-- 				"graphql",
+		-- 				"regex",
+		-- 				"scss",
+		-- 				"lua",
+		-- 				"typescript",
+		-- 				"tsx",
+		-- 				"bash",
+		-- 				"cmake",
+		-- 				"css",
+		-- 			},
+		-- 			highlight = {
+		-- 				enable = true,
+		-- 			},
+		-- 			indent = {
+		-- 				enable = true,
+		-- 			},
+		-- 			autotag = {
+		-- 				enable = true,
+		-- 			},
+		-- 		})
+		-- 	end,
+		-- })
 
 		-- Tree sitter Playground
 		-- https://github.com/nvim-treesitter/playground
-		use("nvim-treesitter/playground")
+		-- use("nvim-treesitter/playground")
 
 		-- https://github.com/nvim-treesitter/nvim-treesitter-refactor
 		-- use 'nvim-treesitter/nvim-treesitter-refactor'
@@ -200,7 +200,7 @@ require("packer").startup({
 						"cssls",
 						"codeqlls",
 						"dockerls",
-						"eslint",
+						-- "eslint",
 						"html",
 						"jsonls",
 						"tsserver",
@@ -277,18 +277,18 @@ require("packer").startup({
 								on_attach = on_attach,
 								settings = lua_settings,
 							})
-						elseif lsp == "tsserver" then
-							lspconfig.tsserver.setup({
-								on_attach = function(client, bufnr)
-									-- local ts_utils = require("nvim-lsp-ts-utils")
-									-- ts_utils.setup({})
-									-- ts_utils.setup_client(client)
-									-- vim.keymap.set("n", "gs", ":TSLspOrganize<CR>", {buffer=bufnr})
-									-- vim.keymap.set("n", "gi", ":TSLspRenameFile<CR>", {buffer=bufnr})
-									-- vim.keymap.set("n", "go", ":TSLspImportAll<CR>", {buffer=bufnr})
-									on_attach(client, bufnr)
-								end,
-							})
+						-- elseif lsp == "tsserver" then
+						-- 	lspconfig.tsserver.setup({
+						-- 		on_attach = function(client, bufnr)
+						-- 			-- local ts_utils = require("nvim-lsp-ts-utils")
+						-- 			-- ts_utils.setup({})
+						-- 			-- ts_utils.setup_client(client)
+						-- 			-- vim.keymap.set("n", "gs", ":TSLspOrganize<CR>", {buffer=bufnr})
+						-- 			-- vim.keymap.set("n", "gi", ":TSLspRenameFile<CR>", {buffer=bufnr})
+						-- 			-- vim.keymap.set("n", "go", ":TSLspImportAll<CR>", {buffer=bufnr})
+						-- 			on_attach(client, bufnr)
+						-- 		end,
+						-- 	})
 						else
 							lspconfig[lsp].setup({
 								on_attach = on_attach,
@@ -298,6 +298,20 @@ require("packer").startup({
 				end,
 			},
 		})
+
+		-- use({
+		-- 	"pmizio/typescript-tools.nvim",
+		-- 	requires = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
+		-- 	config = function()
+		-- 		require("typescript-tools").setup({
+		-- 			settings = {
+		-- 				tsserver_plugins = {
+		-- 					"@styled/typescript-styled-plugin",
+		-- 				},
+		-- 			},
+		-- 		})
+		-- 	end,
+		-- })
 		-- }}}
 
 		-- This tiny plugin adds vscode-like pictograms to neovim built-in LSP
@@ -462,12 +476,12 @@ require("packer").startup({
 		-- }}}
 
 		-- {{{ Plugin: shows colors for color hex codes
-		use({
-			"norcalli/nvim-colorizer.lua",
-			config = function()
-				require("colorizer").setup()
-			end,
-		})
+		-- use({
+		-- 	"norcalli/nvim-colorizer.lua",
+		-- 	config = function()
+		-- 		require("colorizer").setup()
+		-- 	end,
+		-- })
 		-- }}}
 
 		-- {{{ Plugin: Colorscheme
@@ -499,7 +513,7 @@ require("packer").startup({
 							show_root = true, -- makes the root folder not transparent
 							transparent_panel = false, -- make the panel transparent
 						},
-						lsp_trouble = true,
+						lsp_trouble = false,
 						dashboard = false,
 						bufferline = false,
 						telekasten = false,
@@ -589,29 +603,29 @@ require("packer").startup({
 		-- 	-- some optional icons
 		-- 	requires = { "kyazdani42/nvim-web-devicons", opt = true },
 		-- })
-		use({
-			"feline-nvim/feline.nvim",
-			config = function()
-				require("feline").setup({
-					components = require("catppuccin.groups.integrations.feline").get(),
-				})
-			end,
-		})
+		-- use({
+		-- 	"feline-nvim/feline.nvim",
+		-- 	config = function()
+		-- 		require("feline").setup({
+		-- 			components = require("catppuccin.groups.integrations.feline").get(),
+		-- 		})
+		-- 	end,
+		-- })
 		-- }}}
 
 		-- {{{ Plugin: SyntaxAttr
 		-- shows SyntaxAttr highlighting attributes of char under cursor
-		use({
-			"vim-scripts/SyntaxAttr.vim",
-			config = function()
-				vim.keymap.set("n", "<leader>a", ":call SyntaxAttr()<CR>")
-			end,
-		})
+		-- use({
+		-- 	"vim-scripts/SyntaxAttr.vim",
+		-- 	config = function()
+		-- 		vim.keymap.set("n", "<leader>a", ":call SyntaxAttr()<CR>")
+		-- 	end,
+		-- })
 		-- }}}
 
 		-- Language-related
 		-- {{{ Language: Javascript
-		use("jxnblk/vim-mdx-js")
+		-- use("jxnblk/vim-mdx-js")
 		-- }}}
 
 		-- Automatically set up your configuration after cloning packer.nvim
