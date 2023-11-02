@@ -1,0 +1,207 @@
+return {
+	{
+		"neovim/nvim-lspconfig",
+		-- event = "LazyFile",
+		dependencies = {
+			-- { "folke/neoconf.nvim", cmd = "Neoconf", config = false, dependencies = { "nvim-lspconfig" } },
+			-- { "folke/neodev.nvim", opts = {} },
+			{
+				"williamboman/mason.nvim",
+				opts = {
+					PATH = "prepend",
+				},
+			},
+			"williamboman/mason-lspconfig.nvim",
+		},
+		---@class PluginLspOpts
+		opts = {
+			ensure_installed = { "typescript-language-server" },
+			-- options for vim.diagnostic.config()
+			diagnostics = {
+				underline = true,
+				update_in_insert = false,
+				virtual_text = {
+					spacing = 4,
+					source = "if_many",
+					prefix = "●",
+					-- this will set set the prefix to a function that returns the diagnostics icon based on the severity
+					-- this only works on a recent 0.10.0 build. Will be set to "●" when not supported
+					-- prefix = "icons",
+				},
+				severity_sort = true,
+			},
+			-- Enable this to enable the builtin LSP inlay hints on Neovim >= 0.10.0
+			-- Be aware that you also will need to properly configure your LSP server to
+			-- provide the inlay hints.
+			inlay_hints = {
+				enabled = false,
+			},
+			-- add any global capabilities here
+			capabilities = {},
+			-- options for vim.lsp.buf.format
+			-- `bufnr` and `filter` is handled by the LazyVim formatter,
+			-- but can be also overridden when specified
+			format = {
+				formatting_options = nil,
+				timeout_ms = nil,
+			},
+			-- LSP Server Settings
+			---@type lspconfig.options
+			servers = {
+				lua_ls = {
+					-- mason = false, -- set to false if you don't want this server to be installed with mason
+					-- Use this to add any additional keymaps
+					-- for specific lsp servers
+					---@type LazyKeysSpec[]
+					-- keys = {},
+					settings = {
+						Lua = {
+							workspace = {
+								checkThirdParty = false,
+							},
+							completion = {
+								callSnippet = "Replace",
+							},
+						},
+					},
+				},
+			},
+			-- you can do any additional lsp server setup here
+			-- return true if you don't want this server to be setup with lspconfig
+			---@type table<string, fun(server:string, opts:_.lspconfig.options):boolean?>
+			setup = {
+				-- example to setup with typescript.nvim
+				-- tsserver = function(_, opts)
+				--   require("typescript").setup({ server = opts })
+				--   return true
+				-- end,
+				-- Specify * to use this function as a fallback for any server
+				-- ["*"] = function(server, opts) end,
+			},
+		},
+		config = function()
+			local servers = {
+				"bashls",
+				"cmake",
+				"cssls",
+				"codeqlls",
+				"dockerls",
+				-- "eslint",
+				"html",
+				"jsonls",
+				"typescript-language-server",
+				"lua_ls",
+				"pyright",
+				"sqlls",
+				"stylelint_lsp",
+				"vimls",
+				"yamlls",
+			}
+			-- require("nvim-lsp-installer").setup({
+			-- ensure_installed = {},
+			-- automatic_installation = true,
+			-- })
+
+			-- from https://github.com/neovim/nvim-lspconfig
+			-- See `:help vim.diagnostic.*` for documentation on any of the below functions
+			local opts = { silent = true }
+			vim.keymap.set("n", "<space>e", "<cmd>lua vim.diagnostic.open_float()<CR>", opts)
+			vim.keymap.set("n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<CR>", opts)
+			vim.keymap.set("n", "]d", "<cmd>lua vim.diagnostic.goto_next()<CR>", opts)
+			vim.keymap.set("n", "<space>q", "<cmd>lua vim.diagnostic.setloclist()<CR>", opts)
+
+			-- Use an on_attach function to only map the following keys
+			-- after the language server attaches to the current buffer
+			local on_attach = function(client, bufnr)
+				-- Enable completion triggered by <c-x><c-o>
+				vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
+
+				local buf_opts = { buffer = bufnr, unpack(opts) }
+
+				-- Mappings.
+				-- See `:help vim.lsp.*` for documentation on any of the below functions
+				vim.keymap.set("n", "gD", vim.lsp.buf.declaration, buf_opts)
+				vim.keymap.set("n", "gd", vim.lsp.buf.definition, buf_opts)
+				vim.keymap.set("n", "gr", vim.lsp.buf.references, buf_opts)
+				vim.keymap.set("n", "gi", vim.lsp.buf.implementation, buf_opts)
+				vim.keymap.set("n", "K", vim.lsp.buf.hover, buf_opts)
+				-- vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, buf_opts)
+				vim.keymap.set("n", "<leader>wa", vim.lsp.buf.add_workspace_folder, buf_opts)
+				vim.keymap.set("n", "<leader>wr", vim.lsp.buf.remove_workspace_folder, buf_opts)
+				vim.keymap.set("n", "<leader>wl", function()
+					print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+				end, buf_opts)
+				vim.keymap.set("n", "<leader>D", vim.lsp.buf.type_definition, buf_opts)
+				vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, buf_opts)
+				vim.keymap.set("n", "<leader>a", vim.lsp.buf.code_action, buf_opts)
+				vim.keymap.set("n", "<leader>fmt", vim.lsp.buf.format, buf_opts)
+			end
+
+			local lspconfig = require("lspconfig")
+
+			local lua_settings = {
+				Lua = {
+					runtime = {
+						version = "LuaJIT", -- LuaJIT in the case of Neovim
+						path = vim.split(package.path, ";"),
+					},
+					diagnostics = {
+						-- Get the language server to recognize the `vim` global
+						globals = { "vim" },
+					},
+					workspace = {
+						-- Make the server aware of Neovim runtime files
+						library = vim.api.nvim_get_runtime_file("", true),
+					},
+				},
+			}
+
+			-- map buffer local keybindings when the language server attaches
+			for _, lsp in pairs(servers) do
+				if lsp == "sumneko_lua" then
+					lspconfig.sumneko_lua.setup({
+						on_attach = on_attach,
+						settings = lua_settings,
+					})
+				-- elseif lsp == "tsserver" then
+				-- 	lspconfig.tsserver.setup({
+				-- 		on_attach = function(client, bufnr)
+				-- 			-- local ts_utils = require("nvim-lsp-ts-utils")
+				-- 			-- ts_utils.setup({})
+				-- 			-- ts_utils.setup_client(client)
+				-- 			-- vim.keymap.set("n", "gs", ":TSLspOrganize<CR>", {buffer=bufnr})
+				-- 			-- vim.keymap.set("n", "gi", ":TSLspRenameFile<CR>", {buffer=bufnr})
+				-- 			-- vim.keymap.set("n", "go", ":TSLspImportAll<CR>", {buffer=bufnr})
+				-- 			on_attach(client, bufnr)
+				-- 		end,
+				-- 	})
+				else
+					lspconfig[lsp].setup({
+						on_attach = on_attach,
+					})
+				end
+			end
+		end,
+	},
+
+	-- {
+	-- 	"pmizio/typescript-tools.nvim",
+	-- 	dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
+	-- 	config = function()
+	-- 		require("typescript-tools").setup({
+	-- 			settings = {
+	-- 				tsserver_plugins = {
+	-- 					"@styled/typescript-styled-plugin",
+	-- 				},
+	-- 			},
+	-- 		})
+	-- 	end,
+	-- },
+	-- }}}
+
+	-- This tiny plugin adds vscode-like pictograms to neovim built-in LSP
+	{
+		"onsails/lspkind-nvim",
+		-- setup in cmp plugin
+	},
+}
