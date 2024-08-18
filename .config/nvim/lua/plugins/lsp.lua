@@ -136,12 +136,12 @@ return {
 			{
 				"lukas-reineke/lsp-format.nvim",
 				opts = {},
-				dependencies = {
-					{
-						"creativenull/efmls-configs-nvim",
-						version = "v1.x.x", -- version is optional, but recommended
-					},
-				},
+				-- dependencies = {
+				-- 	{
+				-- 		"creativenull/efmls-configs-nvim",
+				-- 		version = "v1.x.x", -- version is optional, but recommended
+				-- 	},
+				-- },
 			},
 		},
 		config = function()
@@ -168,7 +168,7 @@ return {
 					-- 'pylsp',
 					"pyright",
 					"stylelint_lsp",
-					"tailwindcss",
+					-- "tailwindcss",
 					"vimls",
 					"yamlls",
 				},
@@ -178,37 +178,61 @@ return {
 					-- 	require("lspconfig").tsserver.setup { on_attach = require("lsp-format").on_attach }
 					-- end,
 					efm = function()
-						local languages = require("efmls-configs.defaults").languages()
-						local efmls_config = {
-							filetypes = vim.tbl_keys(languages),
-							on_attach = require("lsp-format").on_attach,
-							settings = {
-								rootMarkers = { ".git/" },
-								languages = languages,
-							},
-							init_options = {
-								documentFormatting = true,
-								documentRangeFormatting = true,
-							},
-						}
-
-						require("lspconfig").efm.setup(vim.tbl_extend("force", efmls_config, {
-							-- Pass your custom lsp config below like on_attach and capabilities
-							--
-							-- on_attach = on_attach,
-							-- capabilities = capabilities,
-						}))
-					end,
-					-- eslint = function()
-					-- 	require('lspconfig').eslint.setup({
-					-- 		on_attach = function(client, bufnr)
-					-- 			vim.api.nvim_create_autocmd("BufWritePre", {
-					-- 			  buffer = bufnr,
-					-- 			  command = "EslintFixAll",
-					-- 			})
-					-- 	    end,
-					-- 	})
+            local prettier = {
+              formatCommand = 'prettierd "${INPUT}"',
+              formatStdin = true,
+              env = {
+                string.format('PRETTIERD_LOCAL_PRETTIER_ONLY=%s', 1),
+              },
+            }
+            require("lspconfig").efm.setup {
+                on_attach = require("lsp-format").on_attach,
+                init_options = { documentFormatting = true },
+                settings = {
+                    languages = {
+                        javascript = {prettier},
+                        javascriptreact = {prettier},
+                        ["javascript.jsx"] = {prettier},
+                        typescript = {prettier},
+                        ["typescript.tsx"] = {prettier},
+                        typescriptreact = {prettier},
+                        yaml = { prettier },
+                    },
+                },
+            }
+          end,
+						-- local languages = require("efmls-configs.defaults").languages()
+						-- local efmls_config = {
+						-- 	filetypes = vim.tbl_keys(languages),
+						-- 	on_attach = require("lsp-format").on_attach,
+						-- 	settings = {
+						-- 		rootMarkers = { ".git/" },
+						-- 		languages = languages,
+						-- 	},
+						-- 	init_options = {
+						-- 		documentFormatting = false,
+						-- 		documentRangeFormatting = true,
+						-- 	},
+						-- }
+					--
+					-- 	require("lspconfig").efm.setup(vim.tbl_extend("force", efmls_config, {
+					-- 		-- Pass your custom lsp config below like on_attach and capabilities
+					-- 		--
+					-- 		-- on_attach = on_attach,
+					-- 		-- capabilities = capabilities,
+					-- 	}))
 					-- end,
+					eslint = function()
+						require('lspconfig').eslint.setup({
+							on_attach = function(client, bufnr)
+                require("lsp-format").on_attach(client, bufnr)
+								vim.api.nvim_create_autocmd("BufWritePre", {
+								  buffer = bufnr,
+								  command = "EslintFixAll",
+								})
+              end,
+						})
+					end,
 					lua_ls = function()
 						-- (Optional) Configure lua language server for neovim
 						local lua_opts = lsp_zero.nvim_lua_ls()

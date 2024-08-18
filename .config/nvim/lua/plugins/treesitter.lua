@@ -45,6 +45,8 @@ return {
 					end
 				end,
 			},
+			"windwp/nvim-ts-autotag",
+			"RRethy/nvim-treesitter-endwise",
 		},
 		cmd = { "TSUpdateSync", "TSUpdate", "TSInstall" },
 		keys = {
@@ -54,6 +56,8 @@ return {
 		---@type TSConfig
 		---@diagnostic disable-next-line: missing-fields
 		opts = {
+			autotag = { enable = true },
+			endwise = { enable = true },
 			highlight = { enable = true },
 			indent = { enable = true },
 			ensure_installed = {
@@ -145,11 +149,11 @@ return {
 		},
 	},
 	-- Automatically add closing tags for HTML and JSX
-	{
-		"windwp/nvim-ts-autotag",
-		-- event = "LazyFile",
-		opts = {},
-	},
+	-- {
+	-- 	"windwp/nvim-ts-autotag",
+	-- 	-- event = "LazyFile",
+	-- 	opts = {},
+	-- },
 
 	-- Tree sitter Playground
 	-- https://github.com/nvim-treesitter/playground

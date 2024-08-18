@@ -68,6 +68,19 @@ return {
 				"junegunn/fzf",
 				build = "./install --bin",
 			},
+      config = function()
+        -- calling `setup` is optional for customization
+        require('fzf-lua').setup({
+            winopts = {
+                preview = { default = 'bat_native' },
+            },
+            file_ignore_patterns = { 'node_modules/.*', 'src/sentry/locale/.*' },
+            grep = {
+              rg_opts = "--sort-files --hidden --column --line-number --no-heading " ..
+                "--color=always --smart-case -g '!{.git,node_modules,src/sentry/locale}/*,*.po'",
+            }
+        })
+      end,
 			-- optional for icon support
 			"kyazdani42/nvim-web-devicons",
 		},
@@ -196,9 +209,21 @@ return {
 	{
 		"windwp/nvim-autopairs",
 		event = "InsertEnter",
-		config = function()
+		opts = {
+			-- Before        Input         After
+			-- ------------------------------------
+			-- (  |))         (            (  (|))
+			enable_check_bracket_line = true,
+
+			-- Before        Input         After
+			-- ------------------------------------
+			-- |foobar        (            (|foobar
+			-- |.foobar       (            (|.foobar
+			-- ignored_next_char = "[%w%.]", -- will ignore alphanumeric and `.` symbol
+		},
+		config = function(_, opts)
 			local npairs = require("nvim-autopairs")
-			npairs.setup()
+			npairs.setup(opts)
 
 			local cmp_autopairs = require("nvim-autopairs.completion.cmp")
 			local cmp = require("cmp")
@@ -259,6 +284,29 @@ return {
 						-- 4: Filename and parent dir, with tilde as the home directory
 
 						shorting_target = 40, -- Shortens path to leave 40 spaces in the window
+						-- for other components. (terrible name, any suggestions?)
+						symbols = {
+							modified = "[+]", -- Text to show when the file is modified.
+							readonly = "[-]", -- Text to show when the file is non-modifiable or readonly.
+							unnamed = "[No Name]", -- Text to show for unnamed buffers.
+							newfile = "[New]", -- Text to show for newly created file before first write
+						},
+					},
+				},
+			},
+			inactive_sections = {
+				lualine_c = {
+					{
+						"filename",
+						file_status = true, -- Displays file status (readonly status, modified status)
+						newfile_status = false, -- Display new file status (new file means no write after created)
+						path = 3, -- 0: Just the filename
+						-- 1: Relative path
+						-- 2: Absolute path
+						-- 3: Absolute path, with tilde as the home directory
+						-- 4: Filename and parent dir, with tilde as the home directory
+
+						-- shorting_target = 40, -- Shortens path to leave 40 spaces in the window
 						-- for other components. (terrible name, any suggestions?)
 						symbols = {
 							modified = "[+]", -- Text to show when the file is modified.
