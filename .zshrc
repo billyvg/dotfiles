@@ -153,3 +153,12 @@ if [ -f '/Users/billy/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/billy/goo
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/billy/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/billy/google-cloud-sdk/completion.zsh.inc'; fi
 export PATH="/Users/billy/code/sentry:$PATH"
+
+export VOLTA_FEATURE_PNPM=1
+export SLACK_DEVELOPER_MENU=true
+export HOMEBREW_GITHUB_API_TOKEN=
+export XDG_RUNTIME_DIR=/Users/billy/.local/run
+export PATH="/Users/billy/.local/share/sentry-devenv/bin:$PATH"
+
+
+eval "$(direnv hook zsh)"
