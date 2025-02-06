@@ -46,7 +46,7 @@ return {
 				end,
 			},
 			"windwp/nvim-ts-autotag",
-			"RRethy/nvim-treesitter-endwise",
+			-- "RRethy/nvim-treesitter-endwise",
 		},
 		cmd = { "TSUpdateSync", "TSUpdate", "TSInstall" },
 		keys = {
@@ -57,7 +57,7 @@ return {
 		---@diagnostic disable-next-line: missing-fields
 		opts = {
 			autotag = { enable = true },
-			endwise = { enable = true },
+			-- endwise = { enable = true },
 			highlight = { enable = true },
 			indent = { enable = true },
 			ensure_installed = {

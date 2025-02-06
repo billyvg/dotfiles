@@ -7,7 +7,7 @@ return {
 		name = "catppuccin",
 		lazy = false, -- make sure we load this during startup if it is your main colorscheme
 		priority = 1000, -- make sure to load this before all the other start plugins
-		dependencies = { "kyazdani42/nvim-web-devicons" },
+		dependencies = { "nvim-tree/nvim-web-devicons" },
 		build = ":CatppuccinCompile",
 		config = function()
 			require("catppuccin").setup({
@@ -62,45 +62,156 @@ return {
 
 	-- {{{ Plugin: fuzzy finder
 	{
-		"ibhagwan/fzf-lua",
-		dependencies = {
-			{
-				"junegunn/fzf",
-				build = "./install --bin",
+		"folke/snacks.nvim",
+		---@type snacks.Config
+		opts = {
+			picker = {
+				-- your picker configuration comes here
+				-- or leave it empty to use the default settings
+				-- refer to the configuration section below
+				win = {
+					input = {
+						keys = {
+							-- to close the picker on ESC instead of going to normal mode,
+							-- add the following keymap to your config
+							["<Esc>"] = { "close", mode = { "n", "i" } },
+							-- I'm used to scrolling like this in LazyGit
+							-- ["J"] = { "preview_scroll_down", mode = { "i", "n" } },
+							-- ["K"] = { "preview_scroll_up", mode = { "i", "n" } },
+							-- ["H"] = { "preview_scroll_left", mode = { "i", "n" } },
+							-- ["L"] = { "preview_scroll_right", mode = { "i", "n" } },
+						},
+					},
+				},
 			},
-      config = function()
-        -- calling `setup` is optional for customization
-        require('fzf-lua').setup({
-            winopts = {
-                preview = { default = 'bat_native' },
-            },
-            file_ignore_patterns = { 'node_modules/.*', 'src/sentry/locale/.*' },
-            grep = {
-              rg_opts = "--sort-files --hidden --column --line-number --no-heading " ..
-                "--color=always --smart-case -g '!{.git,node_modules,src/sentry/locale}/*,*.po'",
-            }
-        })
-      end,
-			-- optional for icon support
-			"kyazdani42/nvim-web-devicons",
 		},
 		keys = {
 			{
-				"<C-p>",
+				"<leader><space>",
 				function()
-					require("fzf-lua").files()
+					Snacks.picker.smart()
 				end,
-				silent = true,
+				desc = "Smart Find Files",
 			},
+			-- { "<leader>,", function() Snacks.picker.buffers() end, desc = "Buffers" },
+			-- { "<leader>/", function() Snacks.picker.grep() end, desc = "Grep" },
+			{
+				"<leader>:",
+				function()
+					Snacks.picker.command_history()
+				end,
+				desc = "Command History",
+			},
+			-- { "<leader>n", function() Snacks.picker.notifications() end, desc = "Notification History" },
+			-- { "<leader>e", function() Snacks.explorer() end, desc = "File Explorer" },
+			-- find
+			-- { "<leader>fb", function() Snacks.picker.buffers() end, desc = "Buffers" },
+			-- { "<leader>fc", function() Snacks.picker.files({ cwd = vim.fn.stdpath("config") }) end, desc = "Find Config File" },
+			{
+				"<C-P>",
+				function()
+					Snacks.picker.files()
+				end,
+				desc = "Find Files",
+			},
+			-- { "<leader>fg", function() Snacks.picker.git_files() end, desc = "Find Git Files" },
+			-- { "<leader>fp", function() Snacks.picker.projects() end, desc = "Projects" },
+			-- { "<leader>fr", function() Snacks.picker.recent() end, desc = "Recent" },
+			-- git
+			-- { "<leader>gl", function() Snacks.picker.git_log() end, desc = "Git Log" },
+			-- { "<leader>gL", function() Snacks.picker.git_log_line() end, desc = "Git Log Line" },
+			-- { "<leader>gs", function() Snacks.picker.git_status() end, desc = "Git Status" },
+			-- { "<leader>gd", function() Snacks.picker.git_diff() end, desc = "Git Diff (Hunks)" },
+			-- { "<leader>gf", function() Snacks.picker.git_log_file() end, desc = "Git Log File" },
+			-- Grep
+			-- { "<leader>sb", function() Snacks.picker.lines() end, desc = "Buffer Lines" },
+			-- { "<leader>sB", function() Snacks.picker.grep_buffers() end, desc = "Grep Open Buffers" },
 			{
 				"<leader>ff",
 				function()
-					require("fzf-lua").grep_project()
+					Snacks.picker.grep({ need_search = false, live = true, supports_live = true })
 				end,
-				silent = true,
+				desc = "Grep",
 			},
+			-- { "<leader>sw", function() Snacks.picker.grep_word() end, desc = "Visual selection or word", mode = { "n", "x" } },
+			-- search
+			-- { '<leader>s"', function() Snacks.picker.registers() end, desc = "Registers" },
+			-- { '<leader>s/', function() Snacks.picker.search_history() end, desc = "Search History" },
+			-- { "<leader>sa", function() Snacks.picker.autocmds() end, desc = "Autocmds" },
+			-- { "<leader>sb", function() Snacks.picker.lines() end, desc = "Buffer Lines" },
+			-- { "<leader>sc", function() Snacks.picker.command_history() end, desc = "Command History" },
+			-- { "<leader>sC", function() Snacks.picker.commands() end, desc = "Commands" },
+			{
+				"<leader>sd",
+				function()
+					Snacks.picker.diagnostics()
+				end,
+				desc = "Diagnostics",
+			},
+			-- { "<leader>sd", function() Snacks.picker.diagnostics_buffer() end, desc = "Buffer Diagnostics" },
+			-- { "<leader>sh", function() Snacks.picker.help() end, desc = "Help Pages" },
+			-- { "<leader>sH", function() Snacks.picker.highlights() end, desc = "Highlights" },
+			-- { "<leader>si", function() Snacks.picker.icons() end, desc = "Icons" },
+			-- { "<leader>sj", function() Snacks.picker.jumps() end, desc = "Jumps" },
+			-- { "<leader>sk", function() Snacks.picker.keymaps() end, desc = "Keymaps" },
+			-- { "<leader>sl", function() Snacks.picker.loclist() end, desc = "Location List" },
+			-- { "<leader>sm", function() Snacks.picker.marks() end, desc = "Marks" },
+			-- { "<leader>sM", function() Snacks.picker.man() end, desc = "Man Pages" },
+			-- { "<leader>sp", function() Snacks.picker.lazy() end, desc = "Search for Plugin Spec" },
+			-- { "<leader>sq", function() Snacks.picker.qflist() end, desc = "Quickfix List" },
+			-- { "<leader>sR", function() Snacks.picker.resume() end, desc = "Resume" },
+			-- { "<leader>su", function() Snacks.picker.undo() end, desc = "Undo History" },
+			-- { "<leader>uC", function() Snacks.picker.colorschemes() end, desc = "Colorschemes" },
+			-- LSP
+			-- { "gd", function() Snacks.picker.lsp_definitions() end, desc = "Goto Definition" },
+			-- { "gD", function() Snacks.picker.lsp_declarations() end, desc = "Goto Declaration" },
+			-- { "gr", function() Snacks.picker.lsp_references() end, nowait = true, desc = "References" },
+			-- { "gI", function() Snacks.picker.lsp_implementations() end, desc = "Goto Implementation" },
+			-- { "gy", function() Snacks.picker.lsp_type_definitions() end, desc = "Goto T[y]pe Definition" },
+			-- { "<leader>ss", function() Snacks.picker.lsp_symbols() end, desc = "LSP Symbols" },
+			-- { "<leader>sS", function() Snacks.picker.lsp_workspace_symbols() end, desc = "LSP Workspace Symbols" },
 		},
 	},
+	-- {
+	-- 	"ibhagwan/fzf-lua",
+	-- 	dependencies = {
+	-- 		{
+	-- 			"junegunn/fzf",
+	-- 			build = "./install --bin",
+	-- 		},
+	--       config = function()
+	--         -- calling `setup` is optional for customization
+	--         require('fzf-lua').setup({
+	--             winopts = {
+	--                 preview = { default = 'bat_native' },
+	--             },
+	--             file_ignore_patterns = { 'node_modules/.*', 'src/sentry/locale/.*' },
+	--             grep = {
+	--               rg_opts = "--sort-files --hidden --column --line-number --no-heading " ..
+	--                 "--color=always --smart-case -g '!{.git,node_modules,src/sentry/locale}/*,*.po'",
+	--             }
+	--         })
+	--       end,
+	-- 		-- optional for icon support
+	-- 		"nvim-tree/nvim-web-devicons",
+	-- 	},
+	-- 	keys = {
+	-- 		{
+	-- 			"<C-p>",
+	-- 			function()
+	-- 				require("fzf-lua").files()
+	-- 			end,
+	-- 			silent = true,
+	-- 		},
+	-- 		{
+	-- 			"<leader>ff",
+	-- 			function()
+	-- 				require("fzf-lua").grep_project()
+	-- 			end,
+	-- 			silent = true,
+	-- 		},
+	-- 	},
+	-- },
 	-- }}}
 
 	-- {{{ Plugin: Commenter
@@ -132,17 +243,21 @@ return {
 	-- https://github.com/folke/trouble.nvim
 	{
 		"folke/trouble.nvim",
-		dependencies = "kyazdani42/nvim-web-devicons",
-		cmd = { "Trouble", "TroubleToggle" },
+		opts = {}, -- for default options, refer to the configuration section for custom setup.
+		cmd = "Trouble",
+		dependencies = { "nvim-tree/nvim-web-devicons", opts = {} },
 		keys = {
-			{ "<leader>xx", "<cmd>TroubleToggle<cr>" },
-			{ "<leader>xq", "<cmd>Trouble quickfix<cr>" },
-			-- { "<leader>xw", "<cmd>Trouble workspace_diagnostics<cr>" },
-			-- { "<leader>xd", "<cmd>Trouble document_diagnostics<cr>" },
-			-- { "<leader>xl", "<cmd>Trouble locist<cr>" },
-			-- { "<leader>gR", "<cmd>Trouble lsp_references<cr>" },
+			{
+				"<leader>xx",
+				"<cmd>Trouble diagnostics toggle<cr>",
+				desc = "Diagnostics (Trouble)",
+			},
+			{
+				"<leader>xX",
+				"<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
+				desc = "Buffer Diagnostics (Trouble)",
+			},
 		},
-		config = {},
 	},
 	-- }}}
 
@@ -171,7 +286,7 @@ return {
 
 	{
 		"lewis6991/gitsigns.nvim",
-		config = {},
+		opts = {},
 	},
 
 	{
@@ -201,7 +316,7 @@ return {
 	-- {{{ Plugin: shows colors for color hex codes
 	{
 		"norcalli/nvim-colorizer.lua",
-		config = {},
+		opts = {},
 	},
 	-- }}}
 
@@ -225,9 +340,9 @@ return {
 			local npairs = require("nvim-autopairs")
 			npairs.setup(opts)
 
-			local cmp_autopairs = require("nvim-autopairs.completion.cmp")
-			local cmp = require("cmp")
-			cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
+			-- local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+			-- local cmp = require("cmp")
+			-- cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
 
 			-- -- skip it, if you use another global object
 			-- _G.MUtils= {}
@@ -256,13 +371,13 @@ return {
 
 	-- {{{ Plugin: Directory viewer
 	{
-		"kyazdani42/nvim-tree.lua",
-		dependencies = { "kyazdani42/nvim-web-devicons" },
+		"nvim-tree/nvim-tree.lua",
+		dependencies = { "nvim-tree/nvim-web-devicons" },
 		cmd = { "NvimTreeToggle" },
 		keys = {
 			{ "<leader>n", ":NvimTreeToggle<cr>" },
 		},
-		config = {},
+		opts = {},
 	},
 	-- }}}
 

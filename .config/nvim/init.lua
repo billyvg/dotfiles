@@ -46,6 +46,8 @@ vim.opt.cursorline = true
 vim.opt.signcolumn = "yes" -- always show git gutter
 vim.opt.showmode = false -- hide modeline
 vim.opt.foldmethod = "marker"
+-- vim.opt.diffopt = "internal,filler,closeoff,linematch:60"
+vim.opt.diffopt = "filler,internal,closeoff,algorithm:histogram,context:5,linematch:60"
 
 -- {{{ Conceal markers
 if vim.fn.has("conceal") then
