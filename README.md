@@ -13,10 +13,7 @@ Follow instructions below
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 - [ ] `brew bundle`
-- [ ] Install node - make sure you use a recent version -- this is required before installing neovim plugins
-```bash
-volta install node@16
-```
+
 - [ ] Install [tmux plugin manager](https://github.com/tmux-plugins/tpm) before you start tmux
 ```bash
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
