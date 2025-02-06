@@ -1,10 +1,6 @@
 # My dotfiles
 
-## Usage
-
-```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/billyvg/dotfiles/main/.dotfiles-bootstrap.sh)"
-```
+Follow instructions below
 
 ### My Checklist
 
@@ -27,6 +23,20 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 ```
 Then when inside of `tmux`, `<prefix> + I` to install the `tmux` plugins.
 
+- [ ] Configure MacOS preferences
+```bash
+./macos-defaults.sh
+```
+
+- [ ] Install the [catppuccin theme](https://github.com/catppuccin/bat) for `bat`
+```bash
+mkdir -p "$(bat --config-dir)/themes"
+wget -P "$(bat --config-dir)/themes" https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Latte.tmTheme
+wget -P "$(bat --config-dir)/themes" https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Frappe.tmTheme
+wget -P "$(bat --config-dir)/themes" https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Macchiato.tmTheme
+wget -P "$(bat --config-dir)/themes" https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Mocha.tmTheme
+bat cache --build
+```
 
 ### Manual
 ```bash
