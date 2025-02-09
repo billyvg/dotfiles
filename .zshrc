@@ -130,7 +130,7 @@ export VOLTA_HOME="$HOME/.volta"
 export PATH="$VOLTA_HOME/bin:$PATH"
 export MANPAGER='nvim +Man!'
 # export BAT_THEME='Monokai Extended'
-export BAT_THEME='Catppuccin'
+export BAT_THEME='Catppuccin Frappe'
 export PATH="$PATH:/Users/billy/.bin"
 
 [ -f ~/.sentryrc ] && source ~/.sentryrc
