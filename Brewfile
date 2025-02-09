@@ -3,25 +3,29 @@ cask_args appdir: "/Applications"
 tap "homebrew/bundle"
 tap "neovim/neovim" || true
 
+brew "git"
+brew "gh"
+brew "git-delta"                      # for git diffing https://github.com/dandavison/delta
+
 brew "fzf"
 brew "ripgrep"
 brew "fd"
 brew "bat"
-brew "viu"
-brew "git"
+brew "viu"                            # Simple terminal image viewer written in Rust
+brew "wget"
+
+brew "tree-sitter", args: ['HEAD']
 brew "neovim", args: ['HEAD']
-brew "reattach-to-user-namespace"
+
 brew "scmpuff"
 brew "thefuck"
+
 brew "tmux"
-brew "watchman"
-brew "wget"
+brew "reattach-to-user-namespace"
+
 brew "volta"
-brew "gh"
-brew "git-delta"                      # for git diffing
-brew "stylua"                         # lua formatting
 brew "node"
-brew "prettierd"
+# brew "chafa"                          # view images in term
 
 # Casks
 # cask "alacritty"
@@ -30,6 +34,7 @@ cask "ghostty"
 
 # cask "font-hack"
 # cask "font-hack-nerd-font"
+cask "discord"
 cask "font-fira-code-nerd-font"
 cask "1password"
 cask "firefox"
