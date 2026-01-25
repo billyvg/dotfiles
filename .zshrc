@@ -84,6 +84,7 @@ bindkey '^x^e' edit-command-line
 export NODE_REPL_HISTORY_FILE=~/.node_repl
 
 # ALIASES
+alias ls="ls --color"
 alias reload!='. ~/.zshrc'
 alias zshconfig="nvim ~/.zshrc"
 alias pr="gh pr create --fill-first && gh pr view --web"
@@ -136,10 +137,10 @@ export PATH="$PATH:/Users/billy/.bin"
 [ -f ~/.sentryrc ] && source ~/.sentryrc
 
 # Load plugins.
-eval "$(scmpuff init -s)"
+(( ${+commands[scmpuff]} )) && eval "$(scmpuff init -s)"
 
 # thefuck
-eval $(thefuck --alias)
+(( ${+commands[thefuck]} )) && eval $(thefuck --alias)
 
 
 export FZF_DEFAULT_OPTS=" \
@@ -158,4 +159,5 @@ export VOLTA_FEATURE_PNPM=1
 export SLACK_DEVELOPER_MENU=true
 # export XDG_RUNTIME_DIR=/Users/billy/.local/run # idk this was added for some Sentry issue, may not be needed any more
 export PATH="/Users/billy/.local/share/sentry-devenv/bin:$PATH"
-eval "$(/opt/homebrew/bin/brew shellenv)"
+
+[ -f /opt/homebrew/bin/brew ] && eval "$(/opt/homebrew/bin/brew shellenv)"
