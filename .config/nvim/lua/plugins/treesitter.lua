@@ -1,164 +1,122 @@
--- via LazyVim https://raw.githubusercontent.com/LazyVim/LazyVim/main/lua/lazyvim/plugins/treesitter.lua
-
+-- modified version of code from this config
+--https://github.com/fredrikaverpil/dotfiles/blob/main/nvim-fredrik/lua/fredrik/plugins/core/treesitter.lua
 return {
-	-- Treesitter is a new parser generator tool that we can
-	-- use in Neovim to power faster and more accurate
-	-- syntax highlighting.
-	{
-		"nvim-treesitter/nvim-treesitter",
-		version = false, -- last release is way too old and doesn't work on Windows
-		build = ":TSUpdate",
-		-- event = { "LazyFile", "VeryLazy" },
-		event = { "VeryLazy" },
-		init = function(plugin)
-			-- PERF: add nvim-treesitter queries to the rtp and it's custom query predicates early
-			-- This is needed because a bunch of plugins no longer `require("nvim-treesitter")`, which
-			-- no longer trigger the **nvim-treeitter** module to be loaded in time.
-			-- Luckily, the only thins that those plugins need are the custom queries, which we make available
-			-- during startup.
-			require("lazy.core.loader").add_to_rtp(plugin)
-			require("nvim-treesitter.query_predicates")
-		end,
-		dependencies = {
-			{
-				"nvim-treesitter/nvim-treesitter-textobjects",
-				config = function()
-					-- When in diff mode, we want to use the default
-					-- vim text objects c & C instead of the treesitter ones.
-					local move = require("nvim-treesitter.textobjects.move") ---@type table<string,fun(...)>
-					local configs = require("nvim-treesitter.configs")
-					for name, fn in pairs(move) do
-						if name:find("goto") == 1 then
-							move[name] = function(q, ...)
-								if vim.wo.diff then
-									local config = configs.get_module("textobjects.move")[name] ---@type table<string,string>
-									for key, query in pairs(config or {}) do
-										if q == query and key:find("[%]%[][cC]") then
-											vim.cmd("normal! " .. key)
-											return
-										end
-									end
-								end
-								return fn(q, ...)
-							end
-						end
-					end
-				end,
-			},
-			"windwp/nvim-ts-autotag",
-			-- "RRethy/nvim-treesitter-endwise",
-		},
-		cmd = { "TSUpdateSync", "TSUpdate", "TSInstall" },
-		keys = {
-			{ "<c-space>", desc = "Increment selection" },
-			{ "<bs>", desc = "Decrement selection", mode = "x" },
-		},
-		---@type TSConfig
-		---@diagnostic disable-next-line: missing-fields
-		opts = {
-			autotag = { enable = true },
-			-- endwise = { enable = true },
-			highlight = { enable = true },
-			indent = { enable = true },
-			ensure_installed = {
-				"bash",
-				--"comment",
-				"cmake",
-				"css",
-				"diff",
-				"dockerfile",
-				"graphql",
-				"html",
-				"javascript",
-				"jsdoc",
-				"json",
-				"jsonc",
-				"lua",
-				"luadoc",
-				"luap",
-				"markdown",
-				"markdown_inline",
-				"python",
-				"query",
-				"regex",
-				"scss",
-				"toml",
-				"tsx",
-				"typescript",
-				"vim",
-				"vimdoc",
-				"yaml",
-			},
-			incremental_selection = {
-				enable = true,
-				keymaps = {
-					init_selection = "<C-space>",
-					node_incremental = "<C-space>",
-					scope_incremental = false,
-					node_decremental = "<bs>",
-				},
-			},
-			textobjects = {
-				move = {
-					enable = true,
-					goto_next_start = { ["]f"] = "@function.outer", ["]c"] = "@class.outer" },
-					goto_next_end = { ["]F"] = "@function.outer", ["]C"] = "@class.outer" },
-					goto_previous_start = { ["[f"] = "@function.outer", ["[c"] = "@class.outer" },
-					goto_previous_end = { ["[F"] = "@function.outer", ["[C"] = "@class.outer" },
-				},
-			},
-		},
-		---@param opts TSConfig
-		config = function(_, opts)
-			if type(opts.ensure_installed) == "table" then
-				---@type table<string, boolean>
-				local added = {}
-				opts.ensure_installed = vim.tbl_filter(function(lang)
-					if added[lang] then
-						return false
-					end
-					added[lang] = true
-					return true
-				end, opts.ensure_installed)
-			end
-			require("nvim-treesitter.configs").setup(opts)
-		end,
-	},
+  {
+    "nvim-treesitter/nvim-treesitter",
+    lazy = false,
+    event = "BufRead",
+    branch = "main",
+    build = ":TSUpdate",
+    ---@class TSConfig
+    opts = {
+      -- custom handling of parsers
+      ensure_installed = {
+        -- "astro",
+        "bash",
+        -- "c",
+        "css",
+        "diff",
+        "go",
+        "gomod",
+        "gowork",
+        "gosum",
+        "graphql",
+        "html",
+        "javascript",
+        "jsdoc",
+        "json",
+        "lua",
+        "luadoc",
+        "luap",
+        "markdown",
+        "markdown_inline",
+        "python",
+        "query",
+        "regex",
+        "toml",
+        "tsx",
+        "typescript",
+        "vim",
+        "vimdoc",
+        "yaml",
+        "ruby",
+      },
+    },
+    config = function(_, opts)
+      -- install parsers from custom opts.ensure_installed
+      if opts.ensure_installed and #opts.ensure_installed > 0 then
+        require("nvim-treesitter").install(opts.ensure_installed)
+        -- register and start parsers for filetypes
+        for _, parser in ipairs(opts.ensure_installed) do
+          local filetypes = parser -- In this case, parser is the filetype/language name
+          vim.treesitter.language.register(parser, filetypes)
 
-	-- Show context of the current function
-	{
-		"nvim-treesitter/nvim-treesitter-context",
-		-- event = "LazyFile",
-		enabled = true,
-		opts = { mode = "cursor", max_lines = 3 },
-		keys = {
-			{
-				"<leader>ut",
-				function()
-					local Util = require("lazyvim.util")
-					local tsc = require("treesitter-context")
-					tsc.toggle()
-					if Util.inject.get_upvalue(tsc.toggle, "enabled") then
-						Util.info("Enabled Treesitter Context", { title = "Option" })
-					else
-						Util.warn("Disabled Treesitter Context", { title = "Option" })
-					end
-				end,
-				desc = "Toggle Treesitter Context",
-			},
-		},
-	},
-	-- Automatically add closing tags for HTML and JSX
-	-- {
-	-- 	"windwp/nvim-ts-autotag",
-	-- 	-- event = "LazyFile",
-	-- 	opts = {},
-	-- },
+          vim.api.nvim_create_autocmd({ "FileType" }, {
+            pattern = filetypes,
+            callback = function(event)
+              vim.treesitter.start(event.buf, parser)
+            end,
+          })
+        end
+      end
 
-	-- Tree sitter Playground
-	-- https://github.com/nvim-treesitter/playground
-	-- "nvim-treesitter/playground",
+      -- Auto-install and start parsers for any buffer
+      vim.api.nvim_create_autocmd({ "BufRead" }, {
+        callback = function(event)
+          local bufnr = event.buf
+          local filetype = vim.api.nvim_get_option_value("filetype", { buf = bufnr })
 
-	-- https://github.com/nvim-treesitter/nvim-treesitter-refactor
-	-- use 'nvim-treesitter/nvim-treesitter-refactor'
+          -- Skip if no filetype
+          if filetype == "" then
+            return
+          end
+
+          -- Check if this filetype is already handled by explicit opts.ensure_installed config
+          for _, filetypes in pairs(opts.ensure_installed) do
+            local ft_table = type(filetypes) == "table" and filetypes or { filetypes }
+            if vim.tbl_contains(ft_table, filetype) then
+              return -- Already handled above
+            end
+          end
+
+          -- Get parser name based on filetype
+          local parser_name = vim.treesitter.language.get_lang(filetype) -- might return filetype (not helpful)
+          if not parser_name then
+            return
+          end
+          -- Try to get existing parser (helpful check if filetype was returned above)
+          local parser_configs = require("nvim-treesitter.parsers")
+          if not parser_configs[parser_name] then
+            return -- Parser not available, skip silently
+          end
+
+          local parser_installed = pcall(vim.treesitter.get_parser, bufnr, parser_name)
+
+          if not parser_installed then
+            -- If not installed, install parser synchronously
+            require("nvim-treesitter").install({ parser_name }):wait(30000)
+          end
+
+          -- let's check again
+          parser_installed = pcall(vim.treesitter.get_parser, bufnr, parser_name)
+
+          if parser_installed then
+            -- Start treesitter for this buffer
+            vim.treesitter.start(bufnr, parser_name)
+          end
+        end,
+      })
+    end,
+  },
+  {
+    "nvim-treesitter/nvim-treesitter-context",
+    event = "BufRead",
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      event = "BufRead",
+    },
+    opts = {
+      multiwindow = true,
+    },
+  },
 }
