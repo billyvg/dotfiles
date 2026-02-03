@@ -1,124 +1,101 @@
 -- LSP
 return {
   {
-    "neovim/nvim-lspconfig",
-    dependencies = {
-      { "saghen/blink.cmp" },
-      { "williamboman/mason.nvim", config = true },
-      {
-        "WhoIsSethDaniel/mason-tool-installer.nvim",
-        opts = {
-          ensure_installed = {
-            "black",
-            "isort",
-            "prettierd",
-            "stylua",
-            "yamlfmt",
-          },
-        },
+    "mason-org/mason.nvim",
+    config = true,
+  },
+  {
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
+    opts = {
+      ensure_installed = {
+        -- Formatters/linters
+        "black",
+        "isort",
+        "prettierd",
+        "stylua",
+        "yamlfmt",
+        -- LSP servers
+        "bash-language-server",
+        "biome",
+        "css-lsp",
+        "dockerfile-language-server",
+        "html-lsp",
+        "json-lsp",
+        "lua-language-server",
+        "pyright",
+        "stylelint-lsp",
+        "typescript-language-server",
+        "vim-language-server",
+        "yaml-language-server",
       },
-      { "williamboman/mason-lspconfig.nvim" },
-      { "lukas-reineke/lsp-format.nvim" },
     },
+  },
+  {
+    -- LSP setup using native Neovim 0.11 API
+    dir = vim.fn.stdpath("config"),
+    name = "lsp-native",
+    event = { "BufReadPre", "BufNewFile" },
+    dependencies = { "mason-org/mason.nvim", "saghen/blink.cmp" },
     config = function()
+      -- Global config for all servers
       vim.lsp.config("*", {
         root_markers = { ".git" },
         capabilities = require("blink.cmp").get_lsp_capabilities(),
       })
 
-      -- from: https://lsp-zero.netlify.app/blog/you-might-not-need-lsp-zero.html
-      -- and https://github.com/VonHeikemen/prime-init.lua/blob/master/after/plugin/lsp.lua
+      -- LspAttach keymaps
       vim.api.nvim_create_autocmd("LspAttach", {
         desc = "LSP keybindings",
         callback = function(event)
           local opts = { buffer = event.buf }
+          -- vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+          -- vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+          -- vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
+          -- vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
+          -- vim.keymap.set("n", "go", vim.lsp.buf.type_definition, opts) -- `go` conflicts
+          -- vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
+          -- vim.keymap.set("n", "gs", vim.lsp.buf.signature_help, opts)
+          -- vim.keymap.set("n", "gn", vim.lsp.buf.rename, opts)
+          -- vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
+          vim.keymap.set({ "n", "x" }, "<F3>", function()
+            vim.lsp.buf.format({ async = true })
+          end, opts)
 
-          vim.keymap.set("n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
-          vim.keymap.set("n", "gd", "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
-          vim.keymap.set("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>", opts)
-          vim.keymap.set("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<cr>", opts)
-          vim.keymap.set("n", "go", "<cmd>lua vim.lsp.buf.type_definition()<cr>", opts)
-          vim.keymap.set("n", "gr", "<cmd>lua vim.lsp.buf.references()<cr>", opts)
-          vim.keymap.set("n", "gs", "<cmd>lua vim.lsp.buf.signature_help()<cr>", opts)
-          vim.keymap.set("n", "<F2>", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
-          vim.keymap.set({ "n", "x" }, "<F3>", "<cmd>lua vim.lsp.buf.format({async = true})<cr>", opts)
-          vim.keymap.set("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
+          local wk = require("which-key")
+          wk.register({
+            K = { vim.lsp.buf.hover, "LSP hover info" },
+            gd = { vim.lsp.buf.definition, "LSP go to definition" },
+            gD = { vim.lsp.buf.declaration, "LSP go to declaration" },
+            go = { vim.lsp.buf.type_definition, "LSP go to type definition" },
+            gi = { vim.lsp.buf.implementation, "LSP go to implementation" },
+            gr = { vim.lsp.buf.references, "LSP list references" },
+            gs = { vim.lsp.signature_help, "LSP signature help" },
+            gn = { vim.lsp.buf.rename, "LSP rename" },
+            ["<leader>ca"] = { vim.lsp.buf.code_action, "LSP code action" },
+            ["[g"] = { vim.diagnostic.goto_prev, "Go to previous diagnostic" },
+            ["g]"] = { vim.diagnostic.goto_next, "Go to next diagnostic" },
+          }, {
+            mode = "n",
+            silent = true,
+          })
         end,
       })
 
-      require("mason-lspconfig").setup({
-        automatic_installation = true,
-        ensure_installed = {
-          "bashls",
-          "biome",
-          "cssls",
-          "dockerls",
-          -- "eslint",
-          -- "gopls",
-          "html",
-          "jsonls",
-          "lua_ls",
-          -- 'pylsp',
-          -- "basedpyright",
-          "pyright",
-          -- "rust_analyzer",
-          "stylelint_lsp",
-          -- "sqlls",
-          "ts_ls",
-          -- "tailwindcss",
-          "vimls",
-          "yamlls",
-        },
-        handlers = {
-          function(server_name)
-            require("lspconfig")[server_name].setup({})
-          end,
-          ts_ls = function()
-            require("lspconfig").ts_ls.setup({
-              init_options = {
-                hostInfo = "neovim",
-                preferences = {
-                  includeCompletionsForModuleExports = true,
-                  includeCompletionsForImportStatements = true,
-                  importModuleSpecifierPreference = "non-relative",
-                },
-              },
-            })
-          end,
-          lua_ls = function()
-            require("lspconfig").lua_ls.setup({
-              -- {{{ lua lsp settings for nvim
-              settings = {
-                Lua = {
-                  runtime = {
-                    -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
-                    version = "LuaJIT",
-                    path = vim.split(package.path, ";"),
-                  },
-                  diagnostics = {
-                    -- Get the language server to recognize the `vim` global
-                    globals = { "vim" },
-                  },
-                  workspace = {
-                    -- Make the server aware of Neovim runtime files
-                    library = {
-                      -- vim.api.nvim_get_runtime_file("lua", true),
-                      vim.fn.expand("$VIMRUNTIME/lua"),
-                      vim.fn.expand("$VIMRUNTIME/lua/vim/lsp"),
-                      vim.fn.stdpath("data") .. "/lazy/lazy.nvim/lua/lazy",
-                      "${3rd}/luv/library",
-                    },
-                  },
-                  -- Do not send telemetry data containing a randomized but unique identifier
-                  telemetry = {
-                    enable = false,
-                  },
-                },
-              },
-              -- }}}
-            })
-          end,
-        },
+      -- Enable all LSP servers
+      vim.lsp.enable({
+        "bashls",
+        "biome",
+        "cssls",
+        "dockerls",
+        "html",
+        "jsonls",
+        "lua_ls",
+        "pyright",
+        "sourcekit", -- installed with XCode
+        "stylelint_lsp",
+        "ts_ls",
+        "vimls",
+        "yamlls",
       })
     end,
   },
