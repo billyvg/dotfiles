@@ -44,7 +44,7 @@ return {
           if vim.opt_local.modifiable:get() then
             local names = opts.linters_by_ft[vim.bo.filetype]
 
-            if names then
+            if names ~= nil then
               for _, name in pairs(names) do
                 local next = next
 

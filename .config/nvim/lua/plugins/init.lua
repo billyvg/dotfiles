@@ -12,11 +12,19 @@ return {
   },
 
   -- surround
-  -- use 'tpope/vim-surround'
   {
     "kylechui/nvim-surround",
     event = "VeryLazy",
     opts = {},
+  },
+
+  -- session management
+  {
+    "folke/persistence.nvim",
+    event = "BufReadPre", -- this will only start session saving when an actual file was opened
+    opts = {
+      -- add any custom options here
+    },
   },
 
   -- Quick fix
@@ -79,17 +87,6 @@ return {
       ignored_next_char = "[%w%.]", -- will ignore alphanumeric and `.` symbol
     },
   },
-
-  -- Directory viewer
-  -- {
-  -- 	"nvim-tree/nvim-tree.lua",
-  -- 	dependencies = { "nvim-tree/nvim-web-devicons" },
-  -- 	cmd = { "NvimTreeToggle" },
-  -- 	keys = {
-  -- 		{ "<leader>e", ":NvimTreeToggle<cr>", desc = "Directory tree toggle" },
-  -- 	},
-  -- 	opts = {},
-  -- },
 
   -- WhichKey (https://github.com/folke/which-key.nvim)
   -- helps you remember your Neovim keymaps, by showing available keybindings in a popup as you type.

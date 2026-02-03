@@ -1,6 +1,8 @@
 return {
   {
     "ibhagwan/fzf-lua",
+    commit = "63dc0f3e8da457b4e441a52dafdebdff3058506f",
+    enabled = false,
     -- optional for icon support
     dependencies = { "nvim-tree/nvim-web-devicons" },
     keys = {
@@ -14,7 +16,30 @@ return {
       {
         "<leader>ff",
         function()
-          require("fzf-lua").grep_project()
+          require("fzf-lua").grep_project({
+            rg_glob = true,
+            -- file_ignore_patterns = {
+            --   ".*/src/sentry/.*",
+            --   "%.py$",
+            --   "CHANGES",
+            --   -- ".*/api-docs/.*",
+            --   ".*/sentry/data/samples.*",
+            --   "%.svg$",
+            --   "api%-docs.*",
+            --   "fixtures/.*",
+            --   "requirements.*%.txt",
+            -- },
+          })
+        end,
+        desc = "Grep in project (ignore backend)",
+      },
+      {
+        "<leader>fa",
+        function()
+          require("fzf-lua").grep_project({
+            rg_glob = true,
+            -- file_ignore_patterns = { "%.[p|m]o$", "trace.json" },
+          })
         end,
         desc = "Grep in project",
       },
@@ -28,7 +53,7 @@ return {
       {
         "<leader>fl",
         function()
-          require("fzf-lua").live_grep()
+          require("fzf-lua").live_grep_glob()
         end,
         desc = "Live grep",
       },
@@ -61,6 +86,31 @@ return {
         desc = "Commands",
       },
     },
-    opts = {},
+    opts = {
+      -- grep = {
+      -- file_ignore_patterns = {
+      --   "%.[p|m]o$",
+      --   "%.map$",
+      --   "%.sourcemap.js$",
+      --   "trace.json",
+      --   ".*/fixtures/integration-docs/.*",
+      --   ".*/integrations/msteams/test_helpers.py",
+      --   "LICENSE",
+      --   ".*/src/sentry/.*",
+      --   "%.py$",
+      --   "CHANGES",
+      --   -- ".*/api-docs/.*",
+      --   ".*/sentry/data/samples.*",
+      --   "%.svg$",
+      --   "api%-docs.*",
+      --   "fixtures/.*",
+      --   "requirements.*%.txt",
+      -- },
+      -- },
+      grep = {
+        rg_opts = "--sort-files --hidden --column --line-number --no-heading "
+          .. "--color=always --smart-case -g '!{.git,node_modules,api-docs,}/*' -g '!*.{mo,po,svg}' -g '!CHANGES'",
+      },
+    },
   },
 }
