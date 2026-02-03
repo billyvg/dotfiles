@@ -8,12 +8,15 @@ return {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
     opts = {
       ensure_installed = {
+        "tree-sitter-cli",
+
         -- Formatters/linters
         "black",
         "isort",
         "prettierd",
         "stylua",
         "yamlfmt",
+
         -- LSP servers
         "bash-language-server",
         "biome",
@@ -63,17 +66,17 @@ return {
 
           local wk = require("which-key")
           wk.register({
-            K = { vim.lsp.buf.hover, "LSP hover info" },
-            gd = { vim.lsp.buf.definition, "LSP go to definition" },
-            gD = { vim.lsp.buf.declaration, "LSP go to declaration" },
-            go = { vim.lsp.buf.type_definition, "LSP go to type definition" },
-            gi = { vim.lsp.buf.implementation, "LSP go to implementation" },
-            gr = { vim.lsp.buf.references, "LSP list references" },
-            gs = { vim.lsp.signature_help, "LSP signature help" },
-            gn = { vim.lsp.buf.rename, "LSP rename" },
-            ["<leader>ca"] = { vim.lsp.buf.code_action, "LSP code action" },
-            ["[g"] = { vim.diagnostic.goto_prev, "Go to previous diagnostic" },
-            ["g]"] = { vim.diagnostic.goto_next, "Go to next diagnostic" },
+            { "K", vim.lsp.buf.hover, desc = "LSP hover info" },
+            { "gd", vim.lsp.buf.definition, desc = "LSP go to definition" },
+            { "gD", vim.lsp.buf.declaration, desc = "LSP go to declaration" },
+            { "go", vim.lsp.buf.type_definition, desc = "LSP go to type definition" },
+            { "gi", vim.lsp.buf.implementation, desc = "LSP go to implementation" },
+            { "gr", vim.lsp.buf.references, desc = "LSP list references" },
+            { "gs", vim.lsp.buf.signature_help, desc = "LSP signature help" },
+            { "gn", vim.lsp.buf.rename, desc = "LSP rename" },
+            { "<leader>ca", vim.lsp.buf.code_action, desc = "LSP code action" },
+            { "[g", vim.diagnostic.goto_prev, desc = "Go to previous diagnostic" },
+            { "g]", vim.diagnostic.goto_next, desc = "Go to next diagnostic" },
           }, {
             mode = "n",
             silent = true,
