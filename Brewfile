@@ -27,6 +27,9 @@ brew "volta"
 brew "node"
 # brew "chafa"                          # view images in term
 
+brew "tailscale"
+brew "obsidian"
+
 # Casks
 # cask "alacritty"
 # cask "kitty"
@@ -37,14 +40,14 @@ cask "ghostty"
 cask "discord"
 cask "font-fira-code-nerd-font"
 cask "1password"
-cask "firefox"
+cask "firefox@developer-edition"
 cask "google-chrome"
 cask "slack"
 # cask "docker"
 cask "chromedriver"
 cask "visual-studio-code"
 cask "whatsapp@beta"
-cask "wireguard"
+# cask "wireguard"
 
 ### Mac App Store ###
 brew "mas"
@@ -53,4 +56,10 @@ mas "WireGuard", id: 1451685025
 # mas "Divvy", id: 413857548 # Doesn't support Apple Silicon
 # mas "1Password for Safari", id: 1569813296 # 1password Safari extension
 # mas "WhatsApp Desktop", id: 1147396723
+
+
+# hmm not sure how to auto install these
+# gh ext install meiji163/gh-notify
+# gh ext install seachicken/gh-poi
+
 
