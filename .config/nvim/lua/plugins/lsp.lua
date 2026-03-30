@@ -25,7 +25,7 @@ return {
         "html-lsp",
         "json-lsp",
         "lua-language-server",
-        "pyright",
+        "basedpyright",
         "stylelint-lsp",
         "typescript-language-server",
         "vim-language-server",
