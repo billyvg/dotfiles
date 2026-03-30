@@ -60,8 +60,12 @@ return {
 
   -- shows colors for color hex codes
   {
-    "norcalli/nvim-colorizer.lua",
-    opts = {},
+    "catgoose/nvim-colorizer.lua",
+    event = "VeryLazy",
+    opts = {
+      lazy_load = true,
+      -- other setup options
+    },
   },
 
   -- Autoclose
@@ -90,17 +94,18 @@ return {
 
   -- WhichKey (https://github.com/folke/which-key.nvim)
   -- helps you remember your Neovim keymaps, by showing available keybindings in a popup as you type.
-  -- {
-  "folke/which-key.nvim",
-  event = "VeryLazy",
-  opts = {},
-  keys = {
-    {
-      "<leader>?",
-      function()
-        require("which-key").show({ global = false })
-      end,
-      desc = "Buffer Local Keymaps (which-key)",
+  {
+    "folke/which-key.nvim",
+    event = "VeryLazy",
+    opts = {},
+    keys = {
+      {
+        "<leader>?",
+        function()
+          require("which-key").show({ global = false })
+        end,
+        desc = "Buffer Local Keymaps (which-key)",
+      },
     },
   },
 
