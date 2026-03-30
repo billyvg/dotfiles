@@ -1,0 +1,28 @@
+require("mason").setup()
+
+require("mason-tool-installer").setup({
+  ensure_installed = {
+    "tree-sitter-cli",
+
+    -- Formatters/linters
+    "black",
+    "isort",
+    "prettierd",
+    "stylua",
+    "yamlfmt",
+
+    -- LSP servers
+    "bash-language-server",
+    "biome",
+    "css-lsp",
+    "dockerfile-language-server",
+    "html-lsp",
+    "json-lsp",
+    "lua-language-server",
+    "basedpyright",
+    "stylelint-lsp",
+    "typescript-language-server",
+    "vim-language-server",
+    "yaml-language-server",
+  },
+})
