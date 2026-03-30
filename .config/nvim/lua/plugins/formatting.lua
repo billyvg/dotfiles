@@ -6,9 +6,6 @@ local prettier_config = {
 }
 
 local js_config = {
-  -- "biome",
-  -- "biome-check",
-  -- "biome-organize-imports",
   "eslint_d",
   "prettierd",
   stop_after_first = false,
@@ -34,11 +31,7 @@ return {
   ---@module "conform"
   ---@type Conform.setupOpts
   opts = {
-    formatters = {
-      -- biome = {
-      --   require_cwd = true,
-      -- },
-    },
+    formatters = {},
     -- Define your formatters
     formatters_by_ft = {
       lua = { "stylua" },

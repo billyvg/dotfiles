@@ -1,7 +1,6 @@
-local js_linters = { "biomejs", "eslint_d" }
+local js_linters = { "eslint_d" }
 -- only run linters if a configuration file is found for the below linters
 local linter_root_markers = {
-  biomejs = { "biome.json", "biome.jsonc" },
   eslint_d = {
     "eslint.config.js",
     "eslint.config.mjs",
