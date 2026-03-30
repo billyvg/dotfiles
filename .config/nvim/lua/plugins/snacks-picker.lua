@@ -111,13 +111,13 @@ return {
       -- Grep
       -- { "<leader>sb", function() Snacks.picker.lines() end, desc = "Buffer Lines" },
       -- { "<leader>sB", function() Snacks.picker.grep_buffers() end, desc = "Grep Open Buffers" },
-      {
-        "<leader>ff",
-        function()
-          Snacks.picker.grep({ need_search = true, live = true, supports_live = true, hidden = true })
-        end,
-        desc = "Grep",
-      },
+      -- {
+      --   "<leader>ff",
+      --   function()
+      --     Snacks.picker.grep({ need_search = true, live = true, supports_live = true, hidden = true })
+      --   end,
+      --   desc = "Grep",
+      -- },
       {
         "<leader>sw",
         function()

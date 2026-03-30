@@ -1,18 +1,17 @@
 return {
   {
     "ibhagwan/fzf-lua",
-    commit = "63dc0f3e8da457b4e441a52dafdebdff3058506f",
-    enabled = false,
+    enabled = true,
     -- optional for icon support
     dependencies = { "nvim-tree/nvim-web-devicons" },
     keys = {
-      {
-        "<c-p>",
-        function()
-          require("fzf-lua").files()
-        end,
-        desc = "Find Files",
-      },
+      -- {
+      --   "<c-p>",
+      --   function()
+      --     require("fzf-lua").files()
+      --   end,
+      --   desc = "Find Files",
+      -- },
       {
         "<leader>ff",
         function()
@@ -53,7 +52,7 @@ return {
       {
         "<leader>fl",
         function()
-          require("fzf-lua").live_grep_glob()
+          require("fzf-lua").live_grep_native()
         end,
         desc = "Live grep",
       },
