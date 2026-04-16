@@ -19,7 +19,7 @@ require("mason-tool-installer").setup({
     "html-lsp",
     "json-lsp",
     "lua-language-server",
-    "basedpyright",
+    "python-lsp-server",
     "stylelint-lsp",
     "typescript-language-server",
     "vim-language-server",

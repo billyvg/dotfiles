@@ -35,7 +35,7 @@ vim.lsp.enable({
   "html",
   "jsonls",
   "lua_ls",
-  "basedpyright",
+  "pylsp",
   "sourcekit",
   "stylelint_lsp",
   "ts_ls",
