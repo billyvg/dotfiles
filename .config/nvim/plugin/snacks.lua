@@ -22,7 +22,7 @@ require("snacks").setup({
 
   -- Dashboard config
   dashboard = {
-    enabled = false,
+    enabled = true,
     sections = {
       { section = "header" },
       { section = "keys", gap = 1, padding = 1 },
@@ -42,7 +42,7 @@ require("snacks").setup({
         ttl = 5 * 60,
         indent = 3,
       },
-      { section = "startup" },
+      -- { section = "startup" },
     },
   },
 })
@@ -77,9 +77,9 @@ vim.keymap.set("n", "<leader>fb", function()
   Snacks.picker.buffers()
 end, { desc = "Buffers" })
 
-vim.keymap.set("n", "<leader>fc", function()
-  Snacks.picker.files({ cwd = vim.fn.stdpath("config") })
-end, { desc = "Find Config File" })
+-- vim.keymap.set("n", "<leader>fc", function()
+--   Snacks.picker.files({ cwd = vim.fn.stdpath("config") })
+-- end, { desc = "Find Config File" })
 
 vim.keymap.set("n", "<C-P>", function()
   Snacks.picker.files({ hidden = true })
