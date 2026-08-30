@@ -5,8 +5,6 @@ require("mason-tool-installer").setup({
     "tree-sitter-cli",
 
     -- Formatters/linters
-    "black",
-    "isort",
     "prettierd",
     "stylua",
     "yamlfmt",
@@ -20,6 +18,7 @@ require("mason-tool-installer").setup({
     "json-lsp",
     "lua-language-server",
     "python-lsp-server",
+    "ruff",
     "stylelint-lsp",
     "typescript-language-server",
     "vim-language-server",

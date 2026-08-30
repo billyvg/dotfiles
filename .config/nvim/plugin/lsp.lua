@@ -36,6 +36,7 @@ vim.lsp.enable({
   "jsonls",
   "lua_ls",
   "pylsp",
+  "ruff_lsp",
   "sourcekit",
   "stylelint_lsp",
   "ts_ls",
