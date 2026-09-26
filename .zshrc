@@ -1,6 +1,9 @@
 # clone antidote if necessary
 [[ -e ~/.antidote ]] || git clone https://github.com/mattmc3/antidote.git ~/.antidote
 
+# keep PATH entries unique
+typeset -U path
+
 (( ${+commands[direnv]} )) && emulate zsh -c "$(direnv export zsh)"
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
@@ -26,19 +29,36 @@ export PATH="$HOME/.cargo/bin:/usr/local/opt/gettext/bin:$PATH:/usr/local/bin"
 export LSCOLORS="exfxcxdxbxegedabagacad"
 export CLICOLOR=true
 
-
-autoload -Uz compinit && compinit
-
 # source antidote
 . ~/.antidote/antidote.zsh
 
 # generate and source plugins from ~/.zsh_plugins.txt
 antidote load
 
-if [ -f ~/.fzf.zsh ]; then
+# after antidote so plugin completions (zsh-completions) are on fpath
+autoload -Uz compinit && compinit
+
+# Homebrew (macOS or Linux); before fzf so brew's fzf is on PATH
+for brew_bin in /opt/homebrew/bin/brew /usr/local/bin/brew /home/linuxbrew/.linuxbrew/bin/brew; do
+  [[ -x $brew_bin ]] && eval "$($brew_bin shellenv zsh)" && break
+done
+unset brew_bin
+
+# fzf keybindings (Ctrl-R, Ctrl-T, Alt-C) and completion
+if [[ -f ~/.fzf.zsh ]]; then
   source ~/.fzf.zsh
+elif (( $+commands[fzf] )) && fzf --zsh &>/dev/null; then
+  source <(fzf --zsh)  # fzf >= 0.48
 else
-  (( $+commands[brew] )) && $(brew --prefix)/opt/fzf/install
+  # older fzf: scripts ship in a distro-specific location
+  for fzf_dir in /usr/share/doc/fzf/examples /usr/share/fzf ${HOMEBREW_PREFIX:+$HOMEBREW_PREFIX/opt/fzf/shell}; do
+    if [[ -f $fzf_dir/key-bindings.zsh ]]; then
+      source $fzf_dir/key-bindings.zsh
+      [[ -f $fzf_dir/completion.zsh ]] && source $fzf_dir/completion.zsh
+      break
+    fi
+  done
+  unset fzf_dir
 fi
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
@@ -50,14 +70,12 @@ setopt NO_LIST_BEEP
 setopt LOCAL_OPTIONS # allow functions to have local options
 setopt LOCAL_TRAPS # allow functions to have local traps
 setopt HIST_VERIFY
-setopt SHARE_HISTORY # share history between sessions ???
 setopt EXTENDED_HISTORY # add timestamps to history
 setopt PROMPT_SUBST
 setopt CORRECT
 setopt COMPLETE_IN_WORD
 setopt IGNORE_EOF
-setopt APPEND_HISTORY # adds history
-setopt INC_APPEND_HISTORY SHARE_HISTORY  # adds history incrementally and share it across sessions
+setopt SHARE_HISTORY  # write history incrementally and share it across sessions
 setopt HIST_IGNORE_ALL_DUPS  # don't record dupes in history
 setopt HIST_REDUCE_BLANKS
 # don't expand aliases _before_ completion has finished
@@ -74,11 +92,13 @@ bindkey '^u' backward-kill-line
 
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
+# Debian's /etc/zsh/zshrc enables keypad (smkx) mode, so arrows send ^[OA/^[OB
+bindkey '^[OA' history-substring-search-up
+bindkey '^[OB' history-substring-search-down
 
 autoload -U edit-command-line
 zle -N edit-command-line
 bindkey '^x^e' edit-command-line
-
 
 # NODE/NVM
 export NODE_REPL_HISTORY_FILE=~/.node_repl
@@ -90,11 +110,10 @@ alias zshconfig="nvim ~/.zshrc"
 alias pr="gh pr create --fill-first && gh pr view --web"
 alias prd="git push && gh pr create --fill-first --draft && gh pr view --web"
 alias vim=nvim
-alias vimconfig="nvim ~/.config/nvim/init.vim"
+alias vimconfig="nvim ~/.config/nvim/init.lua"
 alias config='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 
 # The rest of my fun git aliases
-alias gl='git pull --prune'
 alias glog="git log --graph --pretty=format:'%Cred%h%Creset %an: %s - %Creset %C(yellow)%d%Creset %Cgreen(%cr)%Creset' --abbrev-commit --date=relative"
 
 # Remove `+` and `-` from start of diff lines; just rely upon color.
@@ -102,7 +121,6 @@ alias gd='git diff --color | sed "s/^\([^-+ ]*\)[-+ ]/\\1/" | less -r'
 
 alias gc='git commit'
 alias gco='git checkout'
-alias gcb='git copy-branch-name'
 alias gb='git branch'
 # alias gs='git status -sb' # upgrade your git if -sb breaks for you. it's fun.
 alias gap='git add -p'
@@ -123,16 +141,13 @@ export NEOVIM_JS_DEBUG=/tmp/nvim_js_debug
 export EDITOR='nvim'
 
 alias yarnconflict="git checkout origin/master -- yarn.lock && yarn"
-alias gprunemerged='git checkout master && comm -12 <(git branch | sed "s/ *//g") <(git remote prune origin | sed "s/^.*origin\///g") | xargs -L1 -J % git branch -D %'
-alias gpm='git checkout main && comm -12 <(git branch | sed "s/ *//g") <(git remote prune origin | sed "s/^.*origin\///g") | xargs -L1 -J % git branch -D %'
+alias gpm='git checkout main && comm -12 <(git branch | sed "s/ *//g") <(git remote prune origin | sed "s/^.*origin\///g") | xargs -r git branch -D'
 
 export NODE_OPTIONS=--max_old_space_size=8192
-export VOLTA_HOME="$HOME/.volta"
-export PATH="$VOLTA_HOME/bin:$PATH"
 export MANPAGER='nvim +Man!'
 # export BAT_THEME='Monokai Extended'
 export BAT_THEME='Catppuccin Frappe'
-export PATH="$PATH:/Users/billy/.bin"
+export PATH="$PATH:$HOME/.bin"
 
 [ -f ~/.sentryrc ] && source ~/.sentryrc
 
@@ -142,22 +157,51 @@ export PATH="$PATH:/Users/billy/.bin"
 # thefuck
 (( ${+commands[thefuck]} )) && eval $(thefuck --alias)
 
-
 export FZF_DEFAULT_OPTS=" \
 --color=bg+:#363a4f,bg:#24273a,spinner:#f4dbd6,hl:#ed8796 \
 --color=fg:#cad3f5,header:#ed8796,info:#c6a0f6,pointer:#f4dbd6 \
 --color=marker:#f4dbd6,fg+:#cad3f5,prompt:#c6a0f6,hl+:#ed8796"
 
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/billy/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/billy/google-cloud-sdk/path.zsh.inc'; fi
+if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
 
 # The next line enables shell command completion for gcloud.
-if [ -f '/Users/billy/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/billy/google-cloud-sdk/completion.zsh.inc'; fi
+if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
 
-export PATH="/Users/billy/code/sentry:$PATH"
-export VOLTA_FEATURE_PNPM=1
+export PATH="$HOME/code/sentry:$PATH"
 export SLACK_DEVELOPER_MENU=true
-# export XDG_RUNTIME_DIR=/Users/billy/.local/run # idk this was added for some Sentry issue, may not be needed any more
-export PATH="/Users/billy/.local/share/sentry-devenv/bin:$PATH"
+# export XDG_RUNTIME_DIR=$HOME/.local/run # idk this was added for some Sentry issue, may not be needed any more
+export PATH="$HOME/.local/share/sentry-devenv/bin:$PATH"
 
-[ -f /opt/homebrew/bin/brew ] && eval "$(/opt/homebrew/bin/brew shellenv)"
+# opencode
+export PATH=$HOME/.opencode/bin:$PATH
+export PATH="$HOME/.local/bin:$PATH"
+
+# bun completions
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# Vite+ bin (https://viteplus.dev)
+. "$HOME/.vite-plus/env"
+
+# Pi -- reachable via the vp shim at ~/.vite-plus/bin/pi, which is already on
+# PATH. Do not prepend a js_runtime bin dir here: it pins one Node for the
+# whole machine ahead of vp's per-directory shims (was 24.19.0, which made
+# codbuilds ignore its own .nvmrc pin of 26.8.1).
+
+# pnpm
+export PNPM_HOME="$HOME/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME/bin:"*) ;;
+  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
+esac
+# pnpm end
+
+# machine-local settings and secrets (untracked)
+[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
+
+# dedupe PATH once everything above has added to it
+path=($path)
