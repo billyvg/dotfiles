@@ -44,7 +44,7 @@ vim.pack.add({
   { src = "https://github.com/catppuccin/nvim", name = "catppuccin" },
 
   -- Completion
-  "https://github.com/saghen/blink.cmp",
+  { src = "https://github.com/saghen/blink.cmp", version = "v1.10.2" },
 
   -- Treesitter
   "https://github.com/nvim-treesitter/nvim-treesitter",
